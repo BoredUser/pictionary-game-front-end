@@ -13,7 +13,14 @@
 	<button @click="clearCanvas">Clear</button>
     <input type="text" v-model="word"/>
     <button @click="answer">Send</button>
-    
+    <div class="brush-size-slider">
+									<input
+										type="range"
+										min="1"
+										max="30"
+										v-model="brushSize"
+									/>
+								</div>
 </div>
 </template>
 
@@ -30,7 +37,8 @@
 				canvasHeight: 0,
 				isDrawing: false,
 				connection: "connecting",
-                word:""
+                word:"",
+				brushSize: 10
 			};
 		},
 		methods: {
