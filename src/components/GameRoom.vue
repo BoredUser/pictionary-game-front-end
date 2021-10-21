@@ -13,43 +13,61 @@
 							id="tabone"
 							checked="checked"
 						/>
-						<label for="tabone">CREATE GAME</label>
+						<label for="tabone">Public Games</label>
 						<div class="tab">
 							<div class="tab-content">
-								<div class="form-group">
-									<p>Time per Round</p>
-									<input
-										placeholder="In Seconds"
-										type="number"
-										v-model.number="gameTime"
-									/>
-								</div>
-								<div class="form-group">
-									<p>Number of Rounds</p>
-									<input
-										type="number"
-										v-model.number="gameRounds"
-									/>
-								</div>
-								<button class="start-btn">Create</button>
+								<ul class="games-list">
+									<li>
+										<p class="game-name">Game Name</p>
+										<button class="start-btn">JOIN</button>
+									</li>
+									<li>
+										<p class="game-name">Game Name</p>
+										<button class="start-btn">JOIN</button>
+									</li>
+									<li>
+										<p class="game-name">Game Name</p>
+										<button class="start-btn">JOIN</button>
+									</li>
+									<li>
+										<p class="game-name">Game Name</p>
+										<button class="start-btn">JOIN</button>
+									</li>
+									<li>
+										<p class="game-name">Game Name</p>
+										<button class="start-btn">JOIN</button>
+									</li>
+									<li>
+										<p class="game-name">Game Name</p>
+										<button class="start-btn">JOIN</button>
+									</li>
+									<li>
+										<p class="game-name">Game Name</p>
+										<button class="start-btn">JOIN</button>
+									</li>
+								</ul>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-			<div class="public-game-wrapper">
-				<div class="public-games">
-                    <h3>Public Games</h3>
-					<ul class="games-list">
-						<li><p class="game-name">Game Name</p><button class="start-btn">JOIN</button></li>
-						<li><p class="game-name">Game Name</p><button class="start-btn">JOIN</button></li>
-                        <li><p class="game-name">Game Name</p><button class="start-btn">JOIN</button></li>
-                        <li><p class="game-name">Game Name</p><button class="start-btn">JOIN</button></li>
-                        <li><p class="game-name">Game Name</p><button class="start-btn">JOIN</button></li>
-                        <li><p class="game-name">Game Name</p><button class="start-btn">JOIN</button></li>
-                        <li><p class="game-name">Game Name</p><button class="start-btn">JOIN</button></li>
-					</ul>
-                </div>
+			<div class="create-game-wrapper">
+				<div class="create-game-form">
+					<h3>Create Game</h3>
+					<div class="form-group">
+						<p>Time per Round</p>
+						<input
+							placeholder="In Seconds"
+							type="number"
+							v-model.number="gameTime"
+						/>
+					</div>
+					<div class="form-group">
+						<p>Number of Rounds</p>
+						<input type="number" v-model.number="gameRounds" />
+					</div>
+					<button class="start-btn">Create</button>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -107,7 +125,7 @@
 		height: 400px;
 	}
 
-	.public-game-wrapper {
+	.create-game-wrapper {
 		flex-basis: 100%;
 		height: 400px;
 	}
@@ -134,6 +152,7 @@
 		border-radius: 10px 10px 0 0;
 		color: rgba(255, 255, 255, 0.7);
 		background-color: rgba(80, 24, 81, 0.25);
+		text-transform: uppercase;
 	}
 
 	.tabs .tab {
@@ -191,18 +210,19 @@
 	.tab .tab-content {
 		width: 100%;
 		text-align: center;
+		overflow: scroll;
 	}
-	.tab .tab-content .form-group {
+	.form-group {
 		margin-bottom: 20px;
 	}
-	.tab .tab-content p {
+	.form-group p {
 		text-transform: uppercase;
 		color: #fff;
 		font-weight: 700;
 		margin-bottom: 10px;
 	}
 
-	.tab input {
+	.form-group input {
 		align-self: center;
 		outline: none;
 		background-color: rgba(255, 255, 255, 0.3);
@@ -245,30 +265,30 @@
 		transform: translateY(5px);
 	}
 
-	.public-games {
+	.create-game-form {
 		margin: 20px;
 		height: 100%;
 		border: 4px rgba(29, 29, 27, 0.15) solid;
 		border-radius: 12px;
-        overflow: scroll;
+		overflow: scroll;
 	}
 
-    .games-list{
-        list-style: none;
-        padding:0;
-    }
+	.games-list {
+		list-style: none;
+		padding: 0;
+	}
 
-    .games-list .game-name{
-        display: inline;
-        margin: 10px 20px;
-        color: #fff;
-        font-weight: 700;
-    }
+	.games-list .game-name {
+		display: inline;
+		margin: 10px 20px;
+		color: #fff;
+		font-weight: 700;
+	}
 
-    .games-list .game-name::after{
-        content: " :";
-    }
-    
+	.games-list .game-name::after {
+		content: " :";
+	}
+
 	@media (min-width: 768px) {
 		.tabs > label {
 			padding: 1rem 2rem;
@@ -280,7 +300,7 @@
 			height: 400px;
 		}
 
-		.public-game-wrapper {
+		.create-game-wrapper {
 			flex-basis: 40%;
 			height: 400px;
 		}

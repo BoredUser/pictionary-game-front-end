@@ -258,29 +258,41 @@
 	}
 
 	.colors-palette {
-		flex-basis: 13%;
+		order: 2;
+		flex-basis: 100%;
 		border-radius: 12px;
 		border: 4px rgba(29, 29, 27, 0.15) solid;
+		background-color: rgba(80, 24, 81, 0.25);
 		display: flex;
 		flex-direction: row;
 		flex-wrap: wrap;
 		align-items: center;
+		margin: 20px 0;
 	}
 
 	.board {
+		order: 1;
 		flex-basis: 70%;
 		border-radius: 12px;
 		border: 4px rgba(29, 29, 27, 0.15) solid;
+		margin: 20px 0;
+		min-height: 300px;
+		min-width: 300px;
 	}
 
 	.controls {
-		flex-basis: 13%;
+		order: 3;
+		flex-basis: 100%;
 		border-radius: 12px;
 		border: 4px rgba(29, 29, 27, 0.15) solid;
 		display: flex;
 		flex-direction: row;
-		flex-wrap: wrap;
 		align-items: center;
+		margin: 20px 0;
+	}
+
+	.controls *{
+		margin: 10px 0;
 	}
 
 	.canvas-board {
@@ -288,9 +300,6 @@
 		background-color: #fff;
 	}
 
-	.colors-palette {
-		background-color: rgba(80, 24, 81, 0.25);
-	}
 
 	.palette-container {
 		display: flex;
@@ -302,7 +311,7 @@
 	}
 
 	.palette-container .color {
-		flex-basis: 30%;
+		flex-basis: 15%;
 		height: 25px;
 		border-radius: 2px;
 		border: 2px #000 solid;
@@ -319,6 +328,7 @@
 	}
 
 	.palette-container .brush-size-slider {
+		flex-basis: 100%;
 		margin: 20px 0;
 		color: #fff;
 	}
@@ -333,7 +343,6 @@
 	}
 
 	.control-icon {
-		flex-basis: 100%;
 		font-size: 2em;
 		color: #fff;
 		margin: auto;
@@ -346,6 +355,25 @@
 		}
 
 		.messages-wrapper {
+			flex-basis: 30%;
+		}
+
+		.colors-palette {
+			order: 1;
+			flex-basis: 13%;	
+		}
+
+		.board {
+			order: 2;
+			flex-basis: 70%;
+		}
+
+		.controls {
+			flex-basis: 13%;
+			flex-direction: column;
+		}
+
+		.palette-container .color {
 			flex-basis: 30%;
 		}
 
