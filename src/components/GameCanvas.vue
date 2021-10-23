@@ -6,9 +6,10 @@
 		<div class="main-content">
 			<div class="canvas-wrapper">
 				<div class="canvas">
-					<h3>Drawing: <span class="draw-word">Word</span></h3>
+					<h3 v-if="userTurn">Drawing: <span class="draw-word">Word</span></h3>
+					<h3 v-else>Rahul is Drawing</h3>
 					<div class="canvas-controls-container">
-						<div class="colors-palette">
+						<div class="colors-palette" v-if="userTurn">
 							<div class="palette-container">
 								<div
 									class="color"
@@ -50,12 +51,18 @@
 							<i
 								class="fas fa-eraser control-icon"
 								@click="eraserActive = true"
+								v-if="userTurn"
 							></i>
 							<i
 								class="fas fa-pencil-alt control-icon"
 								@click="eraserActive = false"
+								v-if="userTurn"
 							></i>
-							<i class="fas fa-backward control-icon" @click="clearCanvas"></i>
+							<i
+								class="fas fa-backward control-icon"
+								@click="clearCanvas"
+								v-if="userTurn"
+							></i>
 							<a
 								class="control-icon"
 								:href="image"
@@ -67,7 +74,69 @@
 				</div>
 			</div>
 			<div class="messages-wrapper">
-				<div class="messages"></div>
+				<div class="time-container">
+					<h3>Remaining Time</h3>
+					<p class="time">
+						<span class="min">{{ remainingMinutes }}</span
+						>:
+						<span class="sec">{{ remainingSeconds }}</span>
+					</p>
+				</div>
+				<div class="messages">
+					<h3>Messages</h3>
+					<ul class="sent-messages">
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+						<li></li>
+					</ul>
+					<div class="send-message">
+						<div class="form-group" v-if="!userTurn">
+							<input
+								type="text"
+								placeholder=""
+								v-model="message"
+							/>
+							<button class="send-btn">Send</button>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -110,6 +179,10 @@
 				isDrawing: false,
 				eraserActive: false,
 				image: null,
+				message: null,
+				remainingMinutes: 10,
+				remainingSeconds: 10,
+				userTurn: true,
 			};
 		},
 		methods: {
@@ -139,7 +212,9 @@
 			beginDrawing(e) {
 				this.x = e.offsetX;
 				this.y = e.offsetY;
-				this.isDrawing = true;
+				if (this.userTurn) {
+					this.isDrawing = true;
+				}
 			},
 			stopDrawing(e) {
 				if (this.isDrawing) {
@@ -223,26 +298,32 @@
 
 	.canvas-wrapper {
 		flex-basis: 100%;
-		height: 550px;
+		flex-grow: 1;
 	}
 
 	.messages-wrapper {
 		flex-basis: 100%;
-		height: 550px;
+		flex-grow: 1;
+		display: flex;
+		flex-flow: column;
 	}
 
 	.canvas {
 		margin: 20px;
-		height: 100%;
 		border-radius: 12px;
 		border: 4px rgba(29, 29, 27, 0.15) solid;
 	}
 
 	.messages {
 		margin: 20px;
-		height: 100%;
 		border-radius: 12px;
 		border: 4px rgba(29, 29, 27, 0.15) solid;
+		flex-grow: 1;
+		flex-shrink: 1;
+		flex-basis: auto;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-around;
 	}
 
 	.draw-word {
@@ -254,7 +335,6 @@
 		flex-direction: row;
 		flex-wrap: wrap;
 		justify-content: space-around;
-		height: 450px;
 	}
 
 	.colors-palette {
@@ -285,13 +365,14 @@
 		flex-basis: 100%;
 		border-radius: 12px;
 		border: 4px rgba(29, 29, 27, 0.15) solid;
+		background-color: rgba(80, 24, 81, 0.25);
 		display: flex;
 		flex-direction: row;
 		align-items: center;
 		margin: 20px 0;
 	}
 
-	.controls *{
+	.controls * {
 		margin: 10px 0;
 	}
 
@@ -299,7 +380,6 @@
 		border-radius: 12px;
 		background-color: #fff;
 	}
-
 
 	.palette-container {
 		display: flex;
@@ -349,6 +429,69 @@
 		cursor: pointer;
 	}
 
+	.form-group input {
+		border-radius: 7px;
+		padding: 8px 10px;
+		margin-right: 10px;
+	}
+
+	.time {
+		font-size: 1.1rem;
+		font-weight: 900;
+		text-transform: uppercase;
+		border-radius: 10px 10px 0 0;
+		color: #fff;
+		text-shadow: rgb(23, 5, 87) 3px 0px 0px,
+			rgb(23, 5, 87) 2.83487px 0.981584px 0px,
+			rgb(23, 5, 87) 2.35766px 1.85511px 0px,
+			rgb(23, 5, 87) 1.62091px 2.52441px 0px,
+			rgb(23, 5, 87) 0.705713px 2.91581px 0px,
+			rgb(23, 5, 87) -0.287171px 2.98622px 0px,
+			rgb(23, 5, 87) -1.24844px 2.72789px 0px,
+			rgb(23, 5, 87) -2.07227px 2.16926px 0px,
+			rgb(23, 5, 87) -2.66798px 1.37182px 0px,
+			rgb(23, 5, 87) -2.96998px 0.42336px 0px,
+			rgb(23, 5, 87) -2.94502px -0.571704px 0px,
+			rgb(23, 5, 87) -2.59586px -1.50383px 0px,
+			rgb(23, 5, 87) -1.96093px -2.27041px 0px,
+			rgb(23, 5, 87) -1.11013px -2.78704px 0px,
+			rgb(23, 5, 87) -0.137119px -2.99686px 0px,
+			rgb(23, 5, 87) 0.850987px -2.87677px 0px,
+			rgb(23, 5, 87) 1.74541px -2.43999px 0px,
+			rgb(23, 5, 87) 2.44769px -1.73459px 0px,
+			rgb(23, 5, 87) 2.88051px -0.838247px 0px;
+	}
+
+	.time * {
+		margin: 0 10px;
+	}
+
+	.send-btn {
+		background-color: #fff;
+		margin: 10px auto;
+		border-radius: 7px;
+		padding: 8px 12px;
+		color: #301a6b;
+		font-weight: 700;
+		text-transform: uppercase;
+	}
+
+	.send-btn:hover {
+		cursor: pointer;
+	}
+
+	.send-btn:active {
+		transform: translateY(5px);
+	}
+
+	.sent-messages {
+		height: 300px;
+		overflow: scroll;
+		border-radius: 12px;
+		border: 4px rgba(29, 29, 27, 0.15) solid;
+		margin: 10px;
+	}
+
 	@media (min-width: 768px) {
 		.canvas-wrapper {
 			flex-basis: 70%;
@@ -360,12 +503,13 @@
 
 		.colors-palette {
 			order: 1;
-			flex-basis: 13%;	
+			flex-basis: 13%;
 		}
 
 		.board {
 			order: 2;
 			flex-basis: 70%;
+			min-height: 400px;
 		}
 
 		.controls {

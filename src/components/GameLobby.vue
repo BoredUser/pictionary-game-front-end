@@ -16,7 +16,7 @@
 					<li class="user"><p class="game-name">Game Name</p></li>
 				</ul>
 
-				<button class="start-btn">Start Game</button>
+				<button v-if="isAdmin" class="start-btn">Start Game</button>
 			</div>
 		</div>
 	</div>
@@ -30,6 +30,7 @@
 		data() {
 			return {
 				backgroundImageUrl,
+				isAdmin: true,
 			};
 		},
 	};

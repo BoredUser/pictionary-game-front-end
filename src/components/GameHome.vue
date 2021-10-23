@@ -19,7 +19,7 @@
 								<p>Choose a Nickname</p>
 								<input
 									type="text"
-									placeholder="TEST"
+									placeholder="CoolNickname"
 									v-model="nickName"
 								/>
 								<button class="start-btn">LOGIN</button>
@@ -39,6 +39,26 @@
 									<input type="password" v-model="password" />
 								</div>
 								<button class="start-btn">LOGIN</button>
+							</div>
+						</div>
+
+						<input type="radio" name="tabs" id="tabthree" />
+						<label for="tabthree">REGISTER</label>
+						<div class="tab">
+							<div class="tab-content">
+								<div class="form-group">
+									<p>UserName</p>
+									<input type="userName" placeholder="CoolNickname" v-model="registerUserName" />
+								</div>
+								<div class="form-group">
+									<p>Password</p>
+									<input type="password" v-model="registerPassword" />
+								</div>
+								<div class="form-group">
+									<p>Confirm Password</p>
+									<input type="password" v-model="registerConfirmPassword" />
+								</div>
+								<button class="start-btn">Register</button>
 							</div>
 						</div>
 					</div>
@@ -71,6 +91,9 @@
 				nickName: "",
 				userName: "",
 				password: "",
+				registerUserName: "",
+				registerPassword: "",
+				registerConfirmPassword:""
 			};
 		},
 	};
@@ -111,12 +134,12 @@
 
 	.login-wrapper {
 		flex-basis: 100%;
-		height: 400px;
+		height: 450px;
 	}
 
 	.instructions-wrapper {
 		flex-basis: 100%;
-		height: 400px;
+		height: 450px;
 	}
 
 	.logintabs {
@@ -148,19 +171,21 @@
 		border-radius: 10px 10px 0 0;
 		color: rgba(255, 255, 255, 0.7);
 		background-color: rgba(80, 24, 81, 0.25);
+		text-transform: uppercase;
 	}
 
 	.tabs .tab {
 		order: 2;
 		flex-grow: 1;
 		width: 100%;
-		height: 300px;
+		height: 400px;
 		display: none;
 		background-color: rgba(80, 24, 81, 0.25);
 		margin-top: 5px;
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
+		border-radius: 0 12px 12px 12px;
 	}
 
 	.tabs input[type="radio"]:checked + label[for="tabtwo"] + .tab {
@@ -266,12 +291,12 @@
 		}
 		.login-wrapper {
 			flex-basis: 60%;
-			height: 400px;
+			height: 450px;
 		}
 
 		.instructions-wrapper {
 			flex-basis: 40%;
-			height: 400px;
+			height: 450px;
 		}
 
 	}

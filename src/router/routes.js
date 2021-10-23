@@ -1,6 +1,6 @@
 import VueRouter from "vue-router";
 import GameHome from "@/components/GameHome.vue";
-import GameRoom from "@/components/GameRoom.vue";
+import GameRooms from "@/components/GameRooms.vue";
 import GameLobby from "@/components/GameLobby.vue";
 import GameCanvas from "@/components/GameCanvas.vue";
 
@@ -29,7 +29,7 @@ const router = new VueRouter({
 		{
 			name: "Rooms",
 			path: "/rooms",
-			component: GameRoom,
+			component: GameRooms,
 			meta: {
 				title: "Pictionary Game | Room",
 				metaTags: [
