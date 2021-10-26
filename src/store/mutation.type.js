@@ -1,1 +1,9 @@
-export const SET_GAME = 'SET_GAME'
+const SET_GAME = 'SET_GAME'
+const SET_NAME = 'SET_NAME'
+const SET_SOCKET_CUTOM_ID ='SET_SOCKET_CUTOM_ID'
+
+export {
+    SET_GAME,
+    SET_NAME,
+    SET_SOCKET_CUTOM_ID
+}

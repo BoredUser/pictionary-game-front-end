@@ -16,34 +16,23 @@
 						<label for="tabone">Public Games</label>
 						<div class="tab">
 							<div class="tab-content">
-								<ul class="games-list">
-									<li>
-										<p class="game-name">Game Name</p>
-										<button class="start-btn">JOIN</button>
-									</li>
-									<li>
-										<p class="game-name">Game Name</p>
-										<button class="start-btn">JOIN</button>
-									</li>
-									<li>
-										<p class="game-name">Game Name</p>
-										<button class="start-btn">JOIN</button>
-									</li>
-									<li>
-										<p class="game-name">Game Name</p>
-										<button class="start-btn">JOIN</button>
-									</li>
-									<li>
-										<p class="game-name">Game Name</p>
-										<button class="start-btn">JOIN</button>
-									</li>
-									<li>
-										<p class="game-name">Game Name</p>
-										<button class="start-btn">JOIN</button>
-									</li>
-									<li>
-										<p class="game-name">Game Name</p>
-										<button class="start-btn">JOIN</button>
+								<ul
+									class="games-list"
+									v-if="publicGames.length > 0"
+								>
+									<li
+										v-for="game in publicGames"
+										:key="game.gameName"
+									>
+										<p class="game-name">
+											{{ game.gameName }}
+										</p>
+										<button
+											@click="joinRoom(game.key)"
+											class="start-btn"
+										>
+											JOIN
+										</button>
 									</li>
 								</ul>
 							</div>
@@ -54,20 +43,7 @@
 							<div class="tab-content">
 								<div class="form-group">
 									<p>Game Id</p>
-									<input
-										type="text"
-										v-model="gameId"
-									/>
-								</div>
-								<div
-									class="form-group"
-									
-								>
-									<p>Password</p>
-									<input
-										type="password"
-										v-model="gamePassword"
-									/>
+									<input type="text" v-model="gameId" />
 								</div>
 								<button class="start-btn">JOIN</button>
 							</div>
@@ -78,6 +54,14 @@
 			<div class="create-game-wrapper">
 				<div class="create-game-form">
 					<h3>Create Game</h3>
+					<div class="form-group">
+						<p>Game Name</p>
+						<input
+							placeholder="GameName"
+							type="text"
+							v-model="gameName"
+						/>
+					</div>
 					<div class="form-group">
 						<p>Time per Round</p>
 						<input
@@ -90,10 +74,6 @@
 						<p>Number of Rounds</p>
 						<input type="number" v-model.number="gameRounds" />
 					</div>
-					<div class="form-group" v-if="createPrivateGame">
-						<p>Password</p>
-						<input type="password" v-model="gamePassword" />
-					</div>
 					<div class="form-group">
 						<label>Private Game</label>
 						<input
@@ -103,7 +83,9 @@
 						/>
 					</div>
 
-					<button class="start-btn">Create</button>
+					<button @click="createGame" class="start-btn">
+						Create
+					</button>
 				</div>
 			</div>
 		</div>
@@ -111,19 +93,88 @@
 </template>
 
 <script>
+	import { mapGetters } from "vuex";
 	import backgroundImageUrl from "@/assets/img/textura.png";
-
+	import { events } from "../utils/constants";
+	import { GET_NAME, GET_SOCKET_CUTOM_ID } from "../store/getter.type";
 	export default {
 		name: "GameRooms",
 		data() {
 			return {
 				backgroundImageUrl,
-				gameId:"",
+				gameId: "",
 				gameTime: "",
 				gameRounds: "",
 				gamePassword: "",
 				createPrivateGame: false,
+				gameName: "",
+				publicGames: () => [],
 			};
+		},
+		computed: {
+			...mapGetters({
+				usernName: GET_NAME,
+				customSocketId: GET_SOCKET_CUTOM_ID
+			}),
+		},
+		mounted() {
+			this.socketConnection();
+			this.listenToSocketEvents();
+		},
+		methods: {
+			socketConnection() {
+				this.$socket.on("connect", () => {
+					console.log(this.$socket.id);
+					this.$socket.emit(events.SET_CUSTOM_CLIENT_ID, {
+						id: this.$socket.id,
+						customId: this.customSocketId
+					});
+					this.$socket.emit(events.GET_ROOMS, {
+						id: this.$socket.id,
+					});
+				});
+			},
+			createGame() {
+				if (
+					this.gameName !== "" &&
+					this.gameRounds > 0 &&
+					this.gameTime > 0
+				) {
+					this.$socket.emit(events.CREATE_ROOM, {
+						rounds: this.gameRounds,
+						time: this.gameTime,
+						id: this.customSocketId,
+						name: this.usernName,
+						type: this.createPrivateGame,
+						gameName: this.gameName,
+					});
+				}
+			},
+			joinRoom(roomId) {
+				this.$socket.emit(events.JOIN_ROOM, {
+					id: roomId,
+					player: {
+						id: this.customSocketId,
+						name: this.usernName,
+					},
+				});
+				this.$router.push({ path: `/room/${roomId}` });
+			},
+			listenToSocketEvents() {
+				this.$socket.on(events.CREATED_ROOM, (data) => {
+					if (data !== "undefined") {
+						const gameId = data.gameID;
+						this.$router.push({ path: `/room/${gameId}` });
+					}
+				});
+				this.$socket.on(events.GET_ROOMS, (data) => {
+					console.log("rooms");
+					if (data !== "undefined") {
+						this.publicGames = data.games;
+						console.log(this.publicGames);
+					}
+				});
+			},
 		},
 	};
 </script>

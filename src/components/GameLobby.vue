@@ -6,14 +6,9 @@
 		<div class="main-content">
 			<div class="users-wrapper">
 				<h3>Joined Users</h3>
-
+				<h3 class="joinedPlayers">{{players.length}}/10</h3>
 				<ul class="users-list">
-					<li class="user"><p class="game-name">Game Name</p></li>
-					<li class="user"><p class="game-name">Game Name</p></li>
-					<li class="user"><p class="game-name">Game Name</p></li>
-					<li class="user"><p class="game-name">Game Name</p></li>
-					<li class="user"><p class="game-name">Game Name</p></li>
-					<li class="user"><p class="game-name">Game Name</p></li>
+					<li v-for="(player , index) in players" :key="index" class="user"><p>{{player}}</p></li>
 				</ul>
 
 				<button v-if="isAdmin" class="start-btn">Start Game</button>
@@ -23,15 +18,56 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
 	import backgroundImageUrl from "@/assets/img/textura.png";
-
+	import { events } from "../utils/constants";
+	import { GET_NAME, GET_SOCKET_CUTOM_ID } from "../store/getter.type";
 	export default {
 		name: "GameLobby",
 		data() {
 			return {
 				backgroundImageUrl,
-				isAdmin: true,
+				isAdmin: false,
+				roomId: null,
+				players:()=>[]
 			};
+		},
+		computed: {
+			...mapGetters({
+				usernName: GET_NAME,
+				customSocketId: GET_SOCKET_CUTOM_ID
+			}),
+		},
+		mounted() {
+			this.roomId = this.$route.params.id;
+			if(this.$socket.connected){
+				this.$socket.emit(events.GET_ROOM_PLAYERS, { id: this.roomId });
+			}
+			this.socketConnection();
+			this.listenToSocketEvents();
+		},
+		methods: {
+			socketConnection() {
+				this.$socket.on("connect", () => {
+					console.log(this.$socket.id);
+					this.$socket.emit(events.SET_CUSTOM_CLIENT_ID, {
+						id: this.$socket.id,
+						customId: this.customSocketId
+					})
+					this.$socket.emit(events.GET_ROOM_PLAYERS, { id: this.roomId });
+				});
+			},
+			listenToSocketEvents() {
+				this.$socket.on(events.GET_ROOM_PLAYERS, (data) => {
+					this.players = [];
+					for (const player in data.players){
+						this.players.push(data.players[player].name);
+					}
+					if (data.creator === this.customSocketId){
+						this.isAdmin = true
+					}
+				});
+			},
 		},
 	};
 </script>
@@ -76,26 +112,30 @@
 		background-color: rgba(80, 24, 81, 0.25);
 	}
 
+	.joinedPlayers{
+		color : #fff;
+	}
+
 	.users-list {
 		margin-top: 30px;
 		list-style: none;
-		padding: 0;	
+		padding: 0;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 	}
 
-	.users-list .user{
+	.users-list .user {
 		width: 80%;
 		border: 4px rgba(29, 29, 27, 0.15) solid;
 		border-bottom: none;
 		color: #fff;
-        font-weight: 700;
+		font-weight: 700;
 	}
 
-	.users-list .user:last-child{
+	.users-list .user:last-child {
 		padding-bottom: 4px;
-		border-bottom:4px rgba(29, 29, 27, 0.15) solid;
+		border-bottom: 4px rgba(29, 29, 27, 0.15) solid;
 	}
 
 	.start-btn {

@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import { createGameStore } from './modules/game.module'
+import { createGameStore } from './modules/game.module';
+import createPersistedState from "vuex-persistedstate";
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -10,4 +11,5 @@ export default new Vuex.Store({
   modules: {
     game: createGameStore()
   },
+  plugins: [createPersistedState()]
 });

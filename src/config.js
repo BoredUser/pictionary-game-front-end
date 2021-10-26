@@ -1,6 +1,6 @@
 const AppConfig = {
 	alertDuration: 2500,
-	apiBaseUrl: "https://mymeetingsapp.herokuapp.com/api",
+	apiBaseUrl: "http://localhost:3000",
 };
 
 export default AppConfig;

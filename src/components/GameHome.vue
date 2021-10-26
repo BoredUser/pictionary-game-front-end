@@ -22,7 +22,12 @@
 									placeholder="CoolNickname"
 									v-model="nickName"
 								/>
-								<button class="start-btn">LOGIN</button>
+								<button
+									@click="anonymousLogin"
+									class="start-btn"
+								>
+									LOGIN
+								</button>
 							</div>
 						</div>
 
@@ -31,14 +36,19 @@
 						<div class="tab">
 							<div class="tab-content">
 								<div class="form-group">
-									<p>UserName</p>
-									<input type="userName" v-model="userName" />
+									<p>Email</p>
+									<input
+										type="userName"
+										v-model="userEmail"
+									/>
 								</div>
 								<div class="form-group">
 									<p>Password</p>
 									<input type="password" v-model="password" />
 								</div>
-								<button class="start-btn">LOGIN</button>
+								<button @click="login" class="start-btn">
+									LOGIN
+								</button>
 							</div>
 						</div>
 
@@ -46,19 +56,43 @@
 						<label for="tabthree">REGISTER</label>
 						<div class="tab">
 							<div class="tab-content">
-								<div class="form-group">
-									<p>UserName</p>
-									<input type="userName" placeholder="CoolNickname" v-model="registerUserName" />
+								<div class="register-form">
+									<div class="form-group">
+										<p>UserName</p>
+										<input
+											type="userName"
+											placeholder="CoolNickname"
+											v-model="registerUserName"
+										/>
+									</div>
+									<div class="form-group">
+										<p>Email</p>
+										<input
+											type="email"
+											v-model="registerUserEmail"
+										/>
+									</div>
+									<div class="form-group">
+										<p>Password</p>
+										<input
+											type="password"
+											v-model="registerPassword"
+										/>
+									</div>
+									<div class="form-group">
+										<p>Confirm Password</p>
+										<input
+											type="password"
+											v-model="registerConfirmPassword"
+										/>
+									</div>
+									<button
+										@click="validatAndRegisterUser"
+										class="start-btn"
+									>
+										Register
+									</button>
 								</div>
-								<div class="form-group">
-									<p>Password</p>
-									<input type="password" v-model="registerPassword" />
-								</div>
-								<div class="form-group">
-									<p>Confirm Password</p>
-									<input type="password" v-model="registerConfirmPassword" />
-								</div>
-								<button class="start-btn">Register</button>
 							</div>
 						</div>
 					</div>
@@ -81,20 +115,112 @@
 </template>
 
 <script>
+	import { nanoid } from 'nanoid'
 	import backgroundImageUrl from "@/assets/img/textura.png";
-
+	import { mapMutations } from "vuex";
+	import { registerUser, userLogin } from "@/services/userManagementServices.js";
+	import { SET_NAME, SET_SOCKET_CUTOM_ID } from "../store/mutation.type";
 	export default {
 		name: "GameHome",
 		data() {
 			return {
 				backgroundImageUrl,
 				nickName: "",
-				userName: "",
+				userEmail: "",
 				password: "",
 				registerUserName: "",
 				registerPassword: "",
-				registerConfirmPassword:""
+				registerConfirmPassword: "",
+				registerUserEmail: "",
+				/* eslint-disable */
+				emailReg:
+					/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/,
+				passwordReg: /^(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[A-Z])/,
+				/* eslint-enable */
 			};
+		},
+		mounted() {
+			console.log(this.socket);
+		},
+		methods: {
+			...mapMutations({
+				setName: SET_NAME,
+				setCustomSocketId: SET_SOCKET_CUTOM_ID
+			}),
+			async registerUser() {
+				try {
+					const data = await registerUser(
+						this.registerUserName,
+						this.registerUserEmail,
+						this.registerPassword
+					);
+					console.log(data);
+				} catch (err) {
+					//TODO: Alert
+					console.log("Error while registration");
+				}
+			},
+			async login() {
+				if (this.userEmail !== "") {
+					if (this.password !== "") {
+						const data = await userLogin(
+							this.userEmail,
+							this.password
+						);
+						console.log(data);
+						this.setCustomSocketId(nanoid(10));
+						this.setName(data.userName);
+						this.$router.push({ name: "Rooms" });
+					} else {
+						//TODO: Alert
+						console.log("Invalid Password");
+					}
+				} else {
+					//TODO: Alert
+					console.log("Invalid Email");
+				}
+			},
+			validatAndRegisterUser() {
+				if (this.registerUserName !== "") {
+					if (
+						this.registerUserEmail != "" &&
+						this.emailReg.test(this.registerUserEmail)
+					) {
+						if (
+							this.registerPassword != null &&
+							this.passwordReg.test(this.registerPassword)
+						) {
+							if (
+								this.registerPassword ===
+								this.registerConfirmPassword
+							) {
+								this.registerUser();
+							} else {
+								//TODO: Alert
+								console.log("Passwords dont match");
+							}
+						} else {
+							//TODO: Alert
+							console.log("Invalid Password");
+						}
+					} else {
+						//TODO: Alert
+						console.log("Invalid Email");
+					}
+				} else {
+					//TODO: Alert
+					console.log("Invalid Username");
+				}
+			},
+			anonymousLogin() {
+				if (this.nickName !== "") {
+					this.setCustomSocketId(nanoid(10));
+					this.setName(this.nickName);
+					this.$router.push({ name: "Rooms" });
+				} else {
+					alert("Invalid Nickname");
+				}
+			},
 		},
 	};
 </script>
@@ -228,9 +354,11 @@
 		display: flex;
 	}
 	.tab .tab-content {
-        width: 100%;
-		text-align:center;
-    }
+		width: 100%;
+		text-align: center;
+		padding: 20px 0;
+		overflow: scroll;
+	}
 	.tab .tab-content .form-group {
 		margin-bottom: 20px;
 	}
@@ -298,13 +426,12 @@
 			flex-basis: 40%;
 			height: 450px;
 		}
-
 	}
 
 	@media (min-width: 992px) {
 		.tabs > label {
 			padding: 1rem 3rem;
 			font-size: 1em;
-		}	
+		}
 	}
 </style>
