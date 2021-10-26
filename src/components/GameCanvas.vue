@@ -128,7 +128,9 @@
 								placeholder=""
 								v-model="message"
 							/>
-							<button @click="sendAnswer" class="send-btn">Send</button>
+							<button @click="sendAnswer" class="send-btn">
+								Send
+							</button>
 						</div>
 					</div>
 				</div>
@@ -177,6 +179,7 @@
 				eraserActive: false,
 				image: null,
 				message: null,
+				roomId:null,
 				// Data from clone
 				word: "Test",
 				remainingTime: 0,
@@ -192,6 +195,9 @@
 
 				//Messages
 				answers: [],
+
+				//Score
+				players: [],
 			};
 		},
 		computed: {
@@ -205,13 +211,18 @@
 			remainingSeconds() {
 				return this.remainingTime / 1000 - this.remainingMinutes * 60;
 			},
+			// getLeaderboard() {
+			// 	let arr = this.players.sort((a, b) => (a.points < b.points ? 1 : -1));
+			// 	return arr;
+			// },
 		},
 		mounted() {
 			this.socketConnection();
 			if (!this.game) {
-				this.$router.push({ name: "Home"});
+				this.$router.push({ name: "Home" });
 				return;
 			}
+			this.roomId = this.$route.params.id;
 			this.handleSocketEvents();
 			this.handleResize();
 			window.addEventListener("resize", this.handleResize);
@@ -273,12 +284,14 @@
 					this.words = [];
 					this.playerChoosing = data;
 					this.currentDrawer = data.name;
+					this.$socket.emit(events.GET_SCORE, { id: this.roomId });
 				});
 
 				this.$socket.on(events.CHOOSE_WORD, (data) => {
 					this.isChooser = true;
 					this.playerChoosing = null;
 					this.words = data;
+					this.$socket.emit(events.GET_SCORE, { id: this.roomId });
 				});
 
 				this.$socket.on(events.START_TIMER, (data) => {
@@ -305,6 +318,10 @@
 					this.gameEnded = true;
 				});
 
+				this.$socket.on(events.GET_SCORE, (data) => {
+					console.log("Got Score");
+					console.log(data);
+				});
 				// MessageEvents
 				// this.$socket.on(events.MESSAGE, (data) => {
 				// 	console.log("message", data);
@@ -324,6 +341,7 @@
 						{ lastWord: true }
 					)
 				);
+
 			},
 
 			drawLine(x1, y1, x2, y2) {
@@ -404,11 +422,14 @@
 			},
 			sendAnswer() {
 				if (!this.message.length || this.isChooser) return;
-				this.$socket.emit(events.MESSAGE, { message: this.message , id: this.customSocketId});
+				this.$socket.emit(events.MESSAGE, {
+					message: this.message,
+					id: this.customSocketId,
+				});
 				this.message = "";
 			},
 			appendAnswers(
-				{ name = "", message},
+				{ name = "", message },
 				{ correctGuess = false, closeGuess = false, lastWord = false } = {}
 			) {
 				console.log("appendAnswers");
@@ -503,7 +524,6 @@
 		flex-direction: column;
 		justify-content: space-around;
 	}
-
 
 	.draw-word {
 		color: #fff;
@@ -670,12 +690,12 @@
 		border: 4px rgba(29, 29, 27, 0.15) solid;
 		margin: 10px;
 	}
-	
-	.sent-messages{
+
+	.sent-messages {
 		list-style: none;
-		padding:0;
+		padding: 0;
 	}
-	.sent-messages li{
+	.sent-messages li {
 		margin: 20px;
 		text-align: left;
 	}
