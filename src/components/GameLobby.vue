@@ -6,22 +6,31 @@
 		<div class="main-content">
 			<div class="users-wrapper">
 				<h3>Joined Users</h3>
-				<h3 class="joinedPlayers">{{players.length}}/10</h3>
+				<h3 class="joinedPlayers">{{ players.length }}/10</h3>
 				<ul class="users-list">
-					<li v-for="(player , index) in players" :key="index" class="user"><p>{{player}}</p></li>
+					<li
+						v-for="(player, index) in players"
+						:key="index"
+						class="user"
+					>
+						<p>{{ player }}</p>
+					</li>
 				</ul>
 
-				<button v-if="isAdmin" class="start-btn">Start Game</button>
+				<button v-if="isAdmin" @click="startGame" class="start-btn">
+					Start Game
+				</button>
 			</div>
 		</div>
 	</div>
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+	import { mapGetters, mapMutations } from "vuex";
 	import backgroundImageUrl from "@/assets/img/textura.png";
 	import { events } from "../utils/constants";
 	import { GET_NAME, GET_SOCKET_CUTOM_ID } from "../store/getter.type";
+	import { SET_GAME } from "../store/mutation.type";
 	export default {
 		name: "GameLobby",
 		data() {
@@ -29,43 +38,59 @@ import { mapGetters } from "vuex";
 				backgroundImageUrl,
 				isAdmin: false,
 				roomId: null,
-				players:()=>[]
+				players: () => [],
 			};
 		},
 		computed: {
 			...mapGetters({
 				usernName: GET_NAME,
-				customSocketId: GET_SOCKET_CUTOM_ID
+				customSocketId: GET_SOCKET_CUTOM_ID,
 			}),
 		},
 		mounted() {
 			this.roomId = this.$route.params.id;
-			if(this.$socket.connected){
+			if (this.$socket.connected) {
 				this.$socket.emit(events.GET_ROOM_PLAYERS, { id: this.roomId });
 			}
 			this.socketConnection();
 			this.listenToSocketEvents();
 		},
 		methods: {
+			...mapMutations({
+				setGame: SET_GAME,
+			}),
+			startGame() {
+				this.setGame({
+					roomId: this.roomId,
+				});
+				if (this.isAdmin) {
+					this.$socket.emit(events.START_GAME);
+					this.$socket.emit(events.GET_PLAYERS);
+				}
+				this.$router.push({ path: `/room/${this.roomId}/canvas` });
+			},
 			socketConnection() {
 				this.$socket.on("connect", () => {
 					console.log(this.$socket.id);
 					this.$socket.emit(events.SET_CUSTOM_CLIENT_ID, {
 						id: this.$socket.id,
-						customId: this.customSocketId
-					})
+						customId: this.customSocketId,
+					});
 					this.$socket.emit(events.GET_ROOM_PLAYERS, { id: this.roomId });
 				});
 			},
 			listenToSocketEvents() {
 				this.$socket.on(events.GET_ROOM_PLAYERS, (data) => {
 					this.players = [];
-					for (const player in data.players){
+					for (const player in data.players) {
 						this.players.push(data.players[player].name);
 					}
-					if (data.creator === this.customSocketId){
-						this.isAdmin = true
+					if (data.creator === this.customSocketId) {
+						this.isAdmin = true;
 					}
+				});
+				this.$socket.on(events.START_GAME, () => {
+					this.startGame();
 				});
 			},
 		},
@@ -112,8 +137,8 @@ import { mapGetters } from "vuex";
 		background-color: rgba(80, 24, 81, 0.25);
 	}
 
-	.joinedPlayers{
-		color : #fff;
+	.joinedPlayers {
+		color: #fff;
 	}
 
 	.users-list {
