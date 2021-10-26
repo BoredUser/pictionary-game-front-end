@@ -8,7 +8,7 @@ import router from '@/router/routes.js'
 
 import store from "./store";
 import { io } from "socket.io-client";
-const socket = io("http://localhost:3000", { transports : ['websocket'] });
+const socket = io("https://fa-pictionary-app.herokuapp.com", { transports : ['websocket'] });
 
 Vue.prototype.$socket = socket;
 

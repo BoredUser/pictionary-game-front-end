@@ -29,7 +29,7 @@
 	import { mapGetters } from "vuex";
 	import backgroundImageUrl from "@/assets/img/textura.png";
 	import { events } from "../utils/constants";
-	import { GET_SCORE } from "../store/getter.type";
+	import { GET_SCORE, GET_SOCKET_CUTOM_ID, GET_NAME } from "../store/getter.type";
 	export default {
 		name: "GameEnd",
 		data() {
@@ -37,19 +37,48 @@
 				backgroundImageUrl,
 				isAdmin: false,
 				roomId: null,
-				players: () => [],
 			};
 		},
 		computed: {
 			...mapGetters({
 				getScore: GET_SCORE,
+				customSocketId: GET_SOCKET_CUTOM_ID,
+				usernName: GET_NAME,
 			}),
+			players() {
+				let scores = [];
+				if (this.getScore[this.roomId] !== "undefined") {
+					for (const player in this.getScore[this.roomId]["scores"]) {
+						if (
+							player === this.customSocketId &&
+							this.getScore[this.roomId]["scores"][player]["name"] ===
+								this.userName
+						) {
+							scores.push({
+								name: this.getScore[this.roomId]["scores"][player][
+									"name"
+								],
+								score: this.getScore[this.roomId]["scores"][player][
+									"score"
+								],
+								isUser: true,
+							});
+						} else {
+							scores.push(
+								this.getScore[this.roomId]["scores"][player]
+							);
+						}
+					}
+				}
+				return scores;
+			},
 		},
 		mounted() {
 			this.roomId = this.$route.params.id;
 			this.socketConnection();
 			this.listenToSocketEvents();
-            console.log(this.getScore);
+			console.log(this.getScore);
+			console.log(this.players);
 		},
 		methods: {
 			startGame() {

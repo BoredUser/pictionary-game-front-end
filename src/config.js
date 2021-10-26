@@ -1,6 +1,6 @@
 const AppConfig = {
 	alertDuration: 2500,
-	apiBaseUrl: "http://localhost:3000",
+	apiBaseUrl: "https://fa-pictionary-app.herokuapp.com",
 };
 
 export default AppConfig;
