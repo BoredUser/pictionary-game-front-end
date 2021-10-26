@@ -140,7 +140,6 @@
 			};
 		},
 		mounted() {
-			console.log(this.socket);
 		},
 		methods: {
 			...mapMutations({
@@ -214,7 +213,7 @@
 			},
 			anonymousLogin() {
 				if (this.nickName !== "") {
-					this.setCustomSocketId(nanoid(10));
+					this.setCustomSocketId(localStorage.getItem("customId"));
 					this.setName(this.nickName);
 					this.$router.push({ name: "Rooms" });
 				} else {

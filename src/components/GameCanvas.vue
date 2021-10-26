@@ -219,6 +219,7 @@
 		},
 		mounted() {
 			this.socketConnection();
+			this.$socket.emit(events.GET_ROOM_PLAYERS, { id: this.roomId });
 			if (!this.game) {
 				this.$router.push({ name: "Home" });
 				return;
@@ -235,10 +236,7 @@
 			socketConnection() {
 				this.$socket.on("connect", () => {
 					console.log(this.$socket.id);
-					this.$socket.emit(events.SET_CUSTOM_CLIENT_ID, {
-						id: this.$socket.id,
-						customId: this.customSocketId,
-					});
+					
 					this.$socket.emit(events.GET_ROOM_PLAYERS, { id: this.roomId });
 				});
 			},

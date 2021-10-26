@@ -114,21 +114,20 @@
 		computed: {
 			...mapGetters({
 				usernName: GET_NAME,
-				customSocketId: GET_SOCKET_CUTOM_ID
+				customSocketId: GET_SOCKET_CUTOM_ID,
 			}),
 		},
 		mounted() {
 			this.socketConnection();
 			this.listenToSocketEvents();
+			this.$socket.emit(events.GET_ROOMS, {
+				id: this.$socket.id,
+			});
 		},
 		methods: {
 			socketConnection() {
 				this.$socket.on("connect", () => {
 					console.log(this.$socket.id);
-					this.$socket.emit(events.SET_CUSTOM_CLIENT_ID, {
-						id: this.$socket.id,
-						customId: this.customSocketId
-					});
 					this.$socket.emit(events.GET_ROOMS, {
 						id: this.$socket.id,
 					});

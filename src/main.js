@@ -1,22 +1,40 @@
-import Vue from 'vue'
-import App from './App.vue'
-
-import './init.js'
+import Vue from "vue";
+import App from "./App.vue";
+import { events } from "@/utils/constants";
+import "./init.js";
 import "normalize.css/normalize.css";
-
-import router from '@/router/routes.js'
+import { nanoid } from "nanoid";
+import router from "@/router/routes.js";
 
 import store from "./store";
 import { io } from "socket.io-client";
-const socket = io("https://fa-pictionary-app.herokuapp.com", { transports : ['websocket'] });
+const socket = io("https://fa-pictionary-app.herokuapp.com", {
+	transports: ["websocket"],
+});
+
+socket.on("connect", () => {
+	console.log(socket.id);
+	if (!localStorage.getItem("customId")) {
+		const cutomId = nanoid(10);
+		localStorage.setItem("customId", cutomId);
+		socket.emit(events.SET_CUSTOM_CLIENT_ID, {
+			id: socket.id,
+			customId: cutomId,
+		});
+	} else {
+		socket.emit(events.SET_CUSTOM_CLIENT_ID, {
+			id: socket.id,
+			customId: localStorage.getItem("customId"),
+		});
+	}
+});
 
 Vue.prototype.$socket = socket;
 
-
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
 
 new Vue({
-  router,
-  store,
-  render: h => h(App),
-}).$mount('#app')
+	router,
+	store,
+	render: (h) => h(App),
+}).$mount("#app");
