@@ -1,11 +1,12 @@
-import { GET_GAME, GET_NAME, GET_SOCKET_CUTOM_ID } from "../getter.type";
-import { SET_GAME, SET_NAME, SET_SOCKET_CUTOM_ID } from "../mutation.type";
+import { GET_GAME, GET_NAME, GET_SOCKET_CUTOM_ID, GET_SCORE } from "../getter.type";
+import { SET_GAME, SET_NAME, SET_SOCKET_CUTOM_ID, SET_SCORE } from "../mutation.type";
 
 const getDefaultState = () => {
 	return {
 		data: null,
 		name: null,
 		socketCustomId: null,
+		score: null
 	};
 };
 
@@ -19,6 +20,9 @@ const getters = {
 	[GET_SOCKET_CUTOM_ID](state) {
 		return state.socketCustomId;
 	},
+	[GET_SCORE](state) {
+		return state.score;
+	}
 };
 
 const mutations = {
@@ -31,6 +35,9 @@ const mutations = {
 	[SET_SOCKET_CUTOM_ID](state, data) {
 		state.socketCustomId = data;
 	},
+	[SET_SCORE](state, data) {
+		state.score = data;
+	}
 };
 
 export function createGameStore() {

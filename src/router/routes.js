@@ -5,7 +5,7 @@ import GameHome from "@/components/GameHome.vue";
 import GameRooms from "@/components/GameRooms.vue";
 import GameLobby from "@/components/GameLobby.vue";
 import GameCanvas from "@/components/GameCanvas.vue";
-
+import GameEnd from "@/components/GameEnd.vue";
 const router = new VueRouter({
 	mode: "history",
 	routes: [
@@ -81,6 +81,24 @@ const router = new VueRouter({
 				],
 			},
 		},
+		{
+			name: "GameEnd",
+			path: "/room/:id/gameend",
+			component: GameEnd,
+			meta: {
+				title: "Pictionary Game | End",
+				metaTags: [
+					{
+						name: "Pictionary Game",
+						content: "The Best drawing and guessing game",
+					},
+					{
+						property: "og:description",
+						content: "The Best drawing and guessing game",
+					},
+				],
+			},
+		}
 	],
 });
 

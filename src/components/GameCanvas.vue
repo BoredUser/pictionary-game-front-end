@@ -141,9 +141,10 @@
 
 <script>
 	import backgroundImageUrl from "@/assets/img/textura.png";
-	import { mapGetters } from "vuex";
+	import { mapGetters, mapMutations } from "vuex";
 	import { GET_GAME, GET_SOCKET_CUTOM_ID } from "../store/getter.type";
 	import { events } from "../utils/constants";
+	import { SET_SCORE } from "../store/mutation.type";
 	export default {
 		name: "GameCanvas",
 		data() {
@@ -228,6 +229,9 @@
 			window.addEventListener("resize", this.handleResize);
 		},
 		methods: {
+			...mapMutations({
+				setScore: SET_SCORE
+			}),
 			socketConnection() {
 				this.$socket.on("connect", () => {
 					console.log(this.$socket.id);
@@ -316,11 +320,15 @@
 				this.$socket.on(events.END_GAME, () => {
 					console.log("END_GAME");
 					this.gameEnded = true;
+					this.$router.push({ path: `/room/${this.roomId}/gameend` });
 				});
 
 				this.$socket.on(events.GET_SCORE, (data) => {
 					console.log("Got Score");
 					console.log(data);
+					let score = {}
+					score[this.roomId] = data;
+					this.setScore(score);
 				});
 				// MessageEvents
 				// this.$socket.on(events.MESSAGE, (data) => {
