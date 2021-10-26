@@ -105,46 +105,21 @@
 				<div class="messages">
 					<h3>Messages</h3>
 					<ul class="sent-messages">
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
+						<li
+							class="answer"
+							v-for="(answer, index) in answers"
+							:key="index"
+						>
+							<p
+								:class="{
+									'correct-guess': answer.correctGuess,
+									'close-guess': answer.closeGuess,
+									'last-word': answer.lastWord,
+								}"
+							>
+								{{ answer.name }} - {{ answer.message }}
+							</p>
+						</li>
 					</ul>
 					<div class="send-message">
 						<div class="form-group" v-if="!isChooser">
@@ -153,7 +128,7 @@
 								placeholder=""
 								v-model="message"
 							/>
-							<button class="send-btn">Send</button>
+							<button @click="sendAnswer" class="send-btn">Send</button>
 						</div>
 					</div>
 				</div>
@@ -165,7 +140,7 @@
 <script>
 	import backgroundImageUrl from "@/assets/img/textura.png";
 	import { mapGetters } from "vuex";
-	import { GET_GAME } from "../store/getter.type";
+	import { GET_GAME, GET_SOCKET_CUTOM_ID } from "../store/getter.type";
 	import { events } from "../utils/constants";
 	export default {
 		name: "GameCanvas",
@@ -214,11 +189,15 @@
 				isChooser: false,
 				gameEnded: false,
 				currentDrawer: "",
+
+				//Messages
+				answers: [],
 			};
 		},
 		computed: {
 			...mapGetters({
 				game: GET_GAME,
+				customSocketId: GET_SOCKET_CUTOM_ID,
 			}),
 			remainingMinutes() {
 				return Math.floor(this.remainingTime / 60000);
@@ -228,8 +207,9 @@
 			},
 		},
 		mounted() {
+			this.socketConnection();
 			if (!this.game) {
-				this.$router.push("/");
+				this.$router.push({ name: "Home"});
 				return;
 			}
 			this.handleSocketEvents();
@@ -237,6 +217,16 @@
 			window.addEventListener("resize", this.handleResize);
 		},
 		methods: {
+			socketConnection() {
+				this.$socket.on("connect", () => {
+					console.log(this.$socket.id);
+					this.$socket.emit(events.SET_CUSTOM_CLIENT_ID, {
+						id: this.$socket.id,
+						customId: this.customSocketId,
+					});
+					this.$socket.emit(events.GET_ROOM_PLAYERS, { id: this.roomId });
+				});
+			},
 			countdown() {
 				if (this.remainingTime <= 0) {
 					clearInterval(this.timer);
@@ -266,6 +256,7 @@
 				this.words = [];
 			},
 			handleSocketEvents() {
+				// Canvas Events
 				this.$socket.on(events.DRAWING, (data) => {
 					console.log("DRAWING");
 					this.drawUpdate(data);
@@ -274,6 +265,8 @@
 					console.log(data, "CLEAR_CANVAS");
 					this.clearCanvasRemote();
 				});
+
+				// Game Events
 				this.$socket.on(events.CHOOSING_WORD, (data) => {
 					this.isChooser = false;
 					// console.log(data)
@@ -311,6 +304,26 @@
 					console.log("END_GAME");
 					this.gameEnded = true;
 				});
+
+				// MessageEvents
+				// this.$socket.on(events.MESSAGE, (data) => {
+				// 	console.log("message", data);
+				// 	this.appendAnswers(data);
+				// });
+				this.$socket.on(events.CLOSE_GUESS, (data) => {
+					console.log("CLOSE_GUESS", data);
+					this.appendAnswers(data, { closeGuess: true });
+				});
+				this.$socket.on(events.CORRECT_GUESS, (data) => {
+					console.log("CORRECT_GUESS", data);
+					this.appendAnswers(data, { correctGuess: true });
+				});
+				this.$socket.on(events.LAST_WORD, ({ word }) =>
+					this.appendAnswers(
+						{ message: `The word was ${word}` },
+						{ lastWord: true }
+					)
+				);
 			},
 
 			drawLine(x1, y1, x2, y2) {
@@ -374,7 +387,7 @@
 				let ctx = this.$refs.paintBoard.getContext("2d");
 				ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
 				this.image = this.$refs.paintBoard.toDataURL("image/png");
-				if (this.isChooser){
+				if (this.isChooser) {
 					this.$socket.emit(events.CLEAR_CANVAS);
 				}
 			},
@@ -388,6 +401,24 @@
 				this.canvasWidth = this.$refs.canvasParent.clientWidth;
 				this.canvasHeight = this.$refs.canvasParent.clientHeight;
 				this.drawUpdate(state);
+			},
+			sendAnswer() {
+				if (!this.message.length || this.isChooser) return;
+				this.$socket.emit(events.MESSAGE, { message: this.message , id: this.customSocketId});
+				this.message = "";
+			},
+			appendAnswers(
+				{ name = "", message},
+				{ correctGuess = false, closeGuess = false, lastWord = false } = {}
+			) {
+				console.log("appendAnswers");
+				this.answers.push({
+					name,
+					message,
+					closeGuess,
+					correctGuess,
+					lastWord,
+				});
 			},
 		},
 	};
@@ -472,6 +503,7 @@
 		flex-direction: column;
 		justify-content: space-around;
 	}
+
 
 	.draw-word {
 		color: #fff;
@@ -637,6 +669,27 @@
 		border-radius: 12px;
 		border: 4px rgba(29, 29, 27, 0.15) solid;
 		margin: 10px;
+	}
+	
+	.sent-messages{
+		list-style: none;
+		padding:0;
+	}
+	.sent-messages li{
+		margin: 20px;
+		text-align: left;
+	}
+	.correct-guess {
+		font-weight: bold;
+		color: #5cffb6;
+	}
+	.close-guess {
+		font-weight: bold;
+		color: orange;
+	}
+	.last-word {
+		font-weight: bold;
+		color: red;
 	}
 
 	@media (min-width: 768px) {
