@@ -4,12 +4,32 @@
 		:style="{ backgroundImage: `url(${backgroundImageUrl})` }"
 	>
 		<div class="main-content">
+			<div class="choose-words-container" v-if="words.length > 0">
+				<p>Choose a word</p>
+				<div class="button-container">
+					<button
+						v-for="(word, index) in words"
+						:key="index"
+						@click="chooseWord(word)"
+					>
+						{{ word }}
+					</button>
+				</div>
+			</div>
+			<div class="choose-words-container" v-else-if="playerChoosing">
+				<h1>{{ playerChoosing.name }} is choosing a word</h1>
+			</div>
 			<div class="canvas-wrapper">
 				<div class="canvas">
-					<h3 v-if="userTurn">Drawing: <span class="draw-word">Word</span></h3>
-					<h3 v-else>Rahul is Drawing</h3>
+					<h3 v-if="isChooser">
+						Drawing: <span class="draw-word">{{ word }}</span>
+					</h3>
+					<h3 v-else>
+						{{ currentDrawer }} is Drawing:
+						<span class="draw-word">{{ word }}</span>
+					</h3>
 					<div class="canvas-controls-container">
-						<div class="colors-palette" v-if="userTurn">
+						<div class="colors-palette" v-if="isChooser">
 							<div class="palette-container">
 								<div
 									class="color"
@@ -51,17 +71,17 @@
 							<i
 								class="fas fa-eraser control-icon"
 								@click="eraserActive = true"
-								v-if="userTurn"
+								v-if="isChooser"
 							></i>
 							<i
 								class="fas fa-pencil-alt control-icon"
 								@click="eraserActive = false"
-								v-if="userTurn"
+								v-if="isChooser"
 							></i>
 							<i
 								class="fas fa-backward control-icon"
 								@click="clearCanvas"
-								v-if="userTurn"
+								v-if="isChooser"
 							></i>
 							<a
 								class="control-icon"
@@ -127,7 +147,7 @@
 						<li></li>
 					</ul>
 					<div class="send-message">
-						<div class="form-group" v-if="!userTurn">
+						<div class="form-group" v-if="!isChooser">
 							<input
 								type="text"
 								placeholder=""
@@ -144,7 +164,9 @@
 
 <script>
 	import backgroundImageUrl from "@/assets/img/textura.png";
-
+	import { mapGetters } from "vuex";
+	import { GET_GAME } from "../store/getter.type";
+	import { events } from "../utils/constants";
 	export default {
 		name: "GameCanvas",
 		data() {
@@ -180,12 +202,117 @@
 				eraserActive: false,
 				image: null,
 				message: null,
-				remainingMinutes: 10,
-				remainingSeconds: 10,
-				userTurn: true,
+				// Data from clone
+				word: "Test",
+				remainingTime: 0,
+				timeInterval: 40000,
+				words: [],
+				playerChoosing: null,
+				disableCanvas: false,
+				hints: [],
+				timer: null,
+				isChooser: false,
+				gameEnded: false,
+				currentDrawer: "",
 			};
 		},
+		computed: {
+			...mapGetters({
+				game: GET_GAME,
+			}),
+			remainingMinutes() {
+				return Math.floor(this.remainingTime / 60000);
+			},
+			remainingSeconds() {
+				return this.remainingTime / 1000 - this.remainingMinutes * 60;
+			},
+		},
+		mounted() {
+			if (!this.game) {
+				this.$router.push("/");
+				return;
+			}
+			this.handleSocketEvents();
+			this.handleResize();
+			window.addEventListener("resize", this.handleResize);
+		},
 		methods: {
+			countdown() {
+				if (this.remainingTime <= 0) {
+					clearInterval(this.timer);
+					// doSomething();
+				} else {
+					this.remainingTime = this.remainingTime - 1000;
+					// elem.innerHTML = timeLeft + " seconds remaining";
+					for (let i = 0; i < this.hints.length; i++) {
+						if (
+							this.remainingTime / 1000 >=
+								this.hints[i].displayTime &&
+							!this.isChooser
+						) {
+							this.word = this.hints[i].hint;
+							break;
+						}
+					}
+				}
+			},
+			startTimer() {
+				clearInterval(this.timer);
+				this.timer = setInterval(this.countdown, 1000);
+			},
+			chooseWord(word) {
+				this.$socket.emit(events.CHOOSE_WORD, { word });
+				this.word = word;
+				this.words = [];
+			},
+			handleSocketEvents() {
+				this.$socket.on(events.DRAWING, (data) => {
+					console.log("DRAWING");
+					this.drawUpdate(data);
+				});
+				this.$socket.on(events.CLEAR_CANVAS, (data) => {
+					console.log(data, "CLEAR_CANVAS");
+					this.clearCanvasRemote();
+				});
+				this.$socket.on(events.CHOOSING_WORD, (data) => {
+					this.isChooser = false;
+					// console.log(data)
+					this.words = [];
+					this.playerChoosing = data;
+					this.currentDrawer = data.name;
+				});
+
+				this.$socket.on(events.CHOOSE_WORD, (data) => {
+					this.isChooser = true;
+					this.playerChoosing = null;
+					this.words = data;
+				});
+
+				this.$socket.on(events.START_TIMER, (data) => {
+					console.log(data, "START_TIMER");
+					this.timeInterval = data.time;
+					this.remainingTime = data.time;
+					this.startTimer();
+				});
+
+				this.$socket.on(events.HIDE_WORD, (data) => {
+					console.log(data, "HIDE_WORD");
+					this.word = data.word;
+				});
+
+				this.$socket.on(events.HINTS, (data) => {
+					console.log(data, "HINTS");
+					this.words = [];
+					this.playerChoosing = null;
+					this.hints = data;
+				});
+
+				this.$socket.on(events.END_GAME, () => {
+					console.log("END_GAME");
+					this.gameEnded = true;
+				});
+			},
+
 			drawLine(x1, y1, x2, y2) {
 				let ctx = this.$refs.paintBoard.getContext("2d");
 				if (this.eraserActive) {
@@ -212,7 +339,7 @@
 			beginDrawing(e) {
 				this.x = e.offsetX;
 				this.y = e.offsetY;
-				if (this.userTurn) {
+				if (this.isChooser) {
 					this.isDrawing = true;
 				}
 			},
@@ -221,6 +348,10 @@
 					this.drawLine(this.x, this.y, e.offsetX, e.offsetY);
 					this.isDrawing = false;
 					this.image = this.$refs.paintBoard.toDataURL("image/png");
+					this.$socket.emit(
+						events.DRAWING,
+						this.$refs.paintBoard.toDataURL("image/png")
+					);
 				}
 			},
 			cancelDrawing() {
@@ -243,6 +374,9 @@
 				let ctx = this.$refs.paintBoard.getContext("2d");
 				ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
 				this.image = this.$refs.paintBoard.toDataURL("image/png");
+				if (this.isChooser){
+					this.$socket.emit(events.CLEAR_CANVAS);
+				}
 			},
 			clearCanvasRemote() {
 				this.isDrawing = false;
@@ -255,10 +389,6 @@
 				this.canvasHeight = this.$refs.canvasParent.clientHeight;
 				this.drawUpdate(state);
 			},
-		},
-		mounted() {
-			this.handleResize();
-			window.addEventListener("resize", this.handleResize);
 		},
 	};
 </script>
@@ -294,6 +424,23 @@
 		top: 50%;
 		left: 50%;
 		transform: translate(-50%, -50%);
+	}
+	.choose-words-container {
+		position: fixed;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		background: rgba(128, 128, 128, 0.8);
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		color: white;
+	}
+
+	.choose-words-container button {
+		padding: 20px 40px;
 	}
 
 	.canvas-wrapper {
