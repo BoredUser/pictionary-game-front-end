@@ -142,7 +142,7 @@
 				if (
 					this.gameName !== "" &&
 					this.gameRounds > 0 &&
-					this.gameTime > 0
+					this.gameTime > 30
 				) {
 					this.$socket.emit(events.CREATE_ROOM, {
 						rounds: this.gameRounds,
@@ -152,15 +152,27 @@
 						type: this.createPrivateGame,
 						gameName: this.gameName,
 					});
+				} else {
+					this.$toasted.error("Invalid Details", {
+						theme: "bubble",
+						position: "top-center",
+						duration: 2000,
+						className: "toaster-class",
+					});
 				}
 			},
 			joinPrivateRoom() {
 				if (this.gameId !== "") {
 					this.$socket.emit(events.JOIN_PRIVATE_ROOM, {
-						Id: this.gameId
+						Id: this.gameId,
 					});
 				} else {
-					alert("Invalid");
+					this.$toasted.error("Invalid GameId", {
+						theme: "bubble",
+						position: "top-center",
+						duration: 2000,
+						className: "toaster-class",
+					});
 				}
 			},
 			joinRoom(roomId) {
@@ -192,7 +204,12 @@
 					if (data.isAvailable) {
 						this.joinRoom(this.gameId);
 					} else {
-						alert("Invalid GameId");
+						this.$toasted.error("Invalid GameId", {
+							theme: "bubble",
+							position: "top-center",
+							duration: 2000,
+							className: "toaster-class",
+						});
 					}
 				});
 			},
@@ -269,7 +286,7 @@
 		order: 2;
 		flex-grow: 1;
 		width: 100%;
-		height: 400px;
+		height: 450px;
 		display: none;
 		background-color: rgba(80, 24, 81, 0.25);
 		margin-top: 5px;
@@ -343,7 +360,7 @@
 		font-size: 1.2em;
 		color: rgba(255, 255, 255, 0.8);
 		padding: 8px 12px;
-		width: 300px;
+		width: 200px;
 	}
 
 	.form-group .checkbox {
@@ -420,6 +437,9 @@
 		.create-game-wrapper {
 			flex-basis: 40%;
 			height: 500px;
+		}
+		.form-group input {
+			width: 300px;
 		}
 	}
 

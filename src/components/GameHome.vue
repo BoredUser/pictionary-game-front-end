@@ -153,8 +153,19 @@
 						this.registerPassword
 					);
 					console.log(data);
+					this.$toasted.show("Registration Successful", {
+						theme: "bubble",
+						position: "top-center",
+						duration: 2000,
+						className: "toaster-class",
+					});
 				} catch (err) {
-					//TODO: Alert
+					this.$toasted.error("Invalid credentials", {
+						theme: "bubble",
+						position: "top-center",
+						duration: 2000,
+						className: "toaster-class",
+					});
 					console.log("Error while registration");
 				}
 			},
@@ -171,15 +182,30 @@
 							this.setName(data.userName);
 							this.$router.push({ name: "Rooms" });
 						} catch (err) {
-							//TODO: Alert
+							this.$toasted.error("Invalid credentials", {
+								theme: "bubble",
+								position: "top-center",
+								duration: 2000,
+								className: "toaster-class",
+							});
 							console.log("Invalid Password");
 						}
 					} else {
-						//TODO: Alert
+						this.$toasted.error("Invalid Password", {
+							theme: "bubble",
+							position: "top-center",
+							duration: 2000,
+							className: "toaster-class",
+						});
 						console.log("Invalid Password");
 					}
 				} else {
-					//TODO: Alert
+					this.$toasted.error("Invalid Email", {
+						theme: "bubble",
+						position: "top-center",
+						duration: 2000,
+						className: "toaster-class",
+					});
 					console.log("Invalid Email");
 				}
 			},
@@ -199,20 +225,39 @@
 							) {
 								this.registerUser();
 							} else {
-								//TODO: Alert
+								this.$toasted.error("Passwords don't match", {
+									theme: "bubble",
+									position: "top-center",
+									duration: 2000,
+									className: "toaster-class",
+								});
 								console.log("Passwords dont match");
 							}
 						} else {
-							//TODO: Alert
+							this.$toasted.error("Invalid Password", {
+								theme: "bubble",
+								position: "top-center",
+								duration: 2000,
+								className: "toaster-class",
+							});
 							console.log("Invalid Password");
 						}
 					} else {
-						//TODO: Alert
+						this.$toasted.error("Invalid Email", {
+							theme: "bubble",
+							position: "top-center",
+							duration: 2000,
+							className: "toaster-class",
+						});
 						console.log("Invalid Email");
 					}
 				} else {
-					//TODO: Alert
-					this.$toasted.show("Invalid Username");
+					this.$toasted.error("Invalid Username", {
+						theme: "bubble",
+						position: "top-center",
+						duration: 2000,
+						className: "toaster-class",
+					});
 					console.log("Invalid Username");
 				}
 			},
@@ -222,7 +267,12 @@
 					this.setName(this.nickName);
 					this.$router.push({ name: "Rooms" });
 				} else {
-					this.$toasted.error("Invalid Username");
+					this.$toasted.error("Invalid Name", {
+						theme: "bubble",
+						position: "top-center",
+						duration: 2000,
+						className: "toaster-class",
+					});
 				}
 			},
 		},
@@ -264,12 +314,12 @@
 
 	.login-wrapper {
 		flex-basis: 100%;
-		height: 450px;
+		height: 550px;
 	}
 
 	.instructions-wrapper {
 		flex-basis: 100%;
-		height: 450px;
+		height: 550px;
 	}
 
 	.logintabs {
@@ -382,7 +432,7 @@
 		font-size: 1.2em;
 		color: rgba(255, 255, 255, 0.8);
 		padding: 8px 12px;
-		width: 300px;
+		width: 200px;
 	}
 
 	.tab input::placeholder {
@@ -429,6 +479,9 @@
 		.instructions-wrapper {
 			flex-basis: 40%;
 			height: 450px;
+		}
+		.tab input {
+			width: 300px;
 		}
 	}
 

@@ -26,7 +26,7 @@
 					</h3>
 					<h3 v-else>
 						{{ currentDrawer }} is Drawing:
-						<span class="draw-word">{{ word }}</span>
+						<p class="draw-word">{{ word }}</p>
 					</h3>
 					<div class="canvas-controls-container">
 						<div class="colors-palette" v-if="isChooser">
@@ -413,7 +413,7 @@
 			clearCanvasRemote() {
 				this.isDrawing = false;
 				let ctx = this.$refs.paintBoard.getContext("2d");
-				ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+					ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
 			},
 			handleResize() {
 				let state = this.$refs.paintBoard.toDataURL("image/png");
@@ -556,8 +556,7 @@
 		border-radius: 12px;
 		border: 4px rgba(29, 29, 27, 0.15) solid;
 		margin: 20px 0;
-		min-height: 300px;
-		min-width: 300px;
+		
 	}
 
 	.controls {

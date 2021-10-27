@@ -6,7 +6,7 @@
 
 <script>
 	export default {
-		name: "App"
+		name: "App",
 	};
 </script>
 
@@ -52,14 +52,12 @@
 		background-color: initial;
 	}
 
-
-
-  h3{
-    font-size: 1.1rem;
-    font-weight: 900;
-    text-transform: uppercase;
-    border-radius: 10px 10px 0 0;
-    color: #5cffb6;
+	h3 {
+		font-size: 1.1rem;
+		font-weight: 900;
+		text-transform: uppercase;
+		border-radius: 10px 10px 0 0;
+		color: #5cffb6;
 		text-shadow: rgb(23, 5, 87) 3px 0px 0px,
 			rgb(23, 5, 87) 2.83487px 0.981584px 0px,
 			rgb(23, 5, 87) 2.35766px 1.85511px 0px,
@@ -79,5 +77,14 @@
 			rgb(23, 5, 87) 1.74541px -2.43999px 0px,
 			rgb(23, 5, 87) 2.44769px -1.73459px 0px,
 			rgb(23, 5, 87) 2.88051px -0.838247px 0px;
-  }
+	}
+
+	.toaster-class {
+		text-transform: uppercase;
+		font-family: "Nunito", sans-serif;
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+		text-align: center;
+		color: #2c3e50;
+	}
 </style>
