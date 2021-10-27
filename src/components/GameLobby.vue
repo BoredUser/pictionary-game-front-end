@@ -5,8 +5,17 @@
 	>
 		<div class="main-content">
 			<div class="users-wrapper">
-				<h3>Joined Users</h3>
-				<h3 class="joinedPlayers">{{ players.length }}/10</h3>
+				<h3>
+					Game Id :
+					<span class="room-id"
+						>{{ roomId }}
+						<i
+							class="far fa-copy copy-icon"
+							@click="copyToClipboard"
+						></i
+					></span>
+				</h3>
+				<h3 class="joined-players">{{ players.length }}/10</h3>
 				<ul class="users-list">
 					<li
 						v-for="(player, index) in players"
@@ -59,6 +68,11 @@
 			...mapMutations({
 				setGame: SET_GAME,
 			}),
+			copyToClipboard() {
+				navigator.clipboard.writeText(
+					`${this.roomId}`
+				);
+			},
 			startGame() {
 				this.setGame({
 					roomId: this.roomId,
@@ -72,7 +86,7 @@
 			socketConnection() {
 				this.$socket.on("connect", () => {
 					console.log(this.$socket.id);
-					
+
 					this.$socket.emit(events.GET_ROOM_PLAYERS, { id: this.roomId });
 				});
 			},
@@ -134,7 +148,21 @@
 		background-color: rgba(80, 24, 81, 0.25);
 	}
 
-	.joinedPlayers {
+	.room-id {
+		margin-left: 10px;
+		color: #fff;
+	}
+
+	.copy-icon{
+		margin-left: 3px;
+		cursor: pointer;
+	}
+
+	.copy-icon:active{
+		transform: translateY(5px);
+	}
+
+	.joined-players {
 		color: #fff;
 	}
 

@@ -6,20 +6,26 @@
 		<div class="main-content">
 			<div class="users-wrapper">
 				<h3>Scores</h3>
-				<h3 class="rank">1/10</h3>
+				<h3 class="rank">{{ userIndex }}/{{players.length}}</h3>
 				<ul class="users-list">
 					<li
 						v-for="(player, index) in players"
 						:key="index"
 						class="user"
 					>
-						<p>{{ player }}</p>
+						<p
+							:class="{
+								isUser: player.isUser,
+								isFirst: index + 1 === 1,
+							}"
+						>
+							{{ index + 1 }} - {{ player.name }} :
+							{{ player.score }}
+						</p>
 					</li>
 				</ul>
 
-				<button v-if="isAdmin" @click="startGame" class="start-btn">
-					Start Game
-				</button>
+				<button @click="toRooms" class="start-btn">Go Home</button>
 			</div>
 		</div>
 	</div>
@@ -28,7 +34,6 @@
 <script>
 	import { mapGetters } from "vuex";
 	import backgroundImageUrl from "@/assets/img/textura.png";
-	import { events } from "../utils/constants";
 	import { GET_SCORE, GET_SOCKET_CUTOM_ID, GET_NAME } from "../store/getter.type";
 	export default {
 		name: "GameEnd",
@@ -43,68 +48,48 @@
 			...mapGetters({
 				getScore: GET_SCORE,
 				customSocketId: GET_SOCKET_CUTOM_ID,
-				usernName: GET_NAME,
+				userName: GET_NAME,
 			}),
 			players() {
 				let scores = [];
-				if (this.getScore[this.roomId] !== "undefined") {
-					for (const player in this.getScore[this.roomId]["scores"]) {
+				if (this.getScore[this.roomId]) {
+					for (const player in this.getScore[this.roomId]) {
 						if (
 							player === this.customSocketId &&
-							this.getScore[this.roomId]["scores"][player]["name"] ===
+							this.getScore[this.roomId][player]["name"] ==
 								this.userName
 						) {
 							scores.push({
-								name: this.getScore[this.roomId]["scores"][player][
-									"name"
-								],
-								score: this.getScore[this.roomId]["scores"][player][
-									"score"
-								],
+								name: this.getScore[this.roomId][player]["name"],
+								score: this.getScore[this.roomId][player]["score"],
 								isUser: true,
 							});
 						} else {
-							scores.push(
-								this.getScore[this.roomId]["scores"][player]
-							);
+							scores.push(this.getScore[this.roomId][player]);
 						}
 					}
 				}
+				scores.sort(function (a, b) {
+					return b.score - a.score;
+				});
+				scores;
+
+				console.log("sorted", scores);
 				return scores;
+			},
+			userIndex() {
+				const index = this.players.map((o) => o.isUser).indexOf(true);
+				return index + 1;
 			},
 		},
 		mounted() {
 			this.roomId = this.$route.params.id;
-			this.socketConnection();
-			this.listenToSocketEvents();
 			console.log(this.getScore);
 			console.log(this.players);
 		},
 		methods: {
-			startGame() {
-				this.setGame({
-					roomId: this.roomId,
-				});
-				if (this.isAdmin) {
-					this.$socket.emit(events.START_GAME);
-					this.$socket.emit(events.GET_PLAYERS);
-				}
-				this.$router.push({ path: `/room/${this.roomId}/canvas` });
-			},
-			socketConnection() {
-				this.$socket.on("connect", () => {
-					console.log(this.$socket.id);
-					this.$socket.emit(events.SET_CUSTOM_CLIENT_ID, {
-						id: this.$socket.id,
-						customId: this.customSocketId,
-					});
-					this.$socket.emit(events.GET_ROOM_PLAYERS, { id: this.roomId });
-				});
-			},
-			listenToSocketEvents() {
-				this.$socket.on(events.START_GAME, () => {
-					this.startGame();
-				});
+			toRooms() {
+				this.$router.push({ name: "Rooms" });
 			},
 		},
 	};
@@ -174,6 +159,14 @@
 	.users-list .user:last-child {
 		padding-bottom: 4px;
 		border-bottom: 4px rgba(29, 29, 27, 0.15) solid;
+	}
+
+	.isUser {
+		color: orange;
+	}
+
+	.isFirst {
+		color: #5cffb6;
 	}
 
 	.start-btn {

@@ -45,7 +45,12 @@
 									<p>Game Id</p>
 									<input type="text" v-model="gameId" />
 								</div>
-								<button class="start-btn">JOIN</button>
+								<button
+									@click="joinPrivateRoom"
+									class="start-btn"
+								>
+									JOIN
+								</button>
 							</div>
 						</div>
 					</div>
@@ -149,6 +154,15 @@
 					});
 				}
 			},
+			joinPrivateRoom() {
+				if (this.gameId !== "") {
+					this.$socket.emit(events.JOIN_PRIVATE_ROOM, {
+						Id: this.gameId
+					});
+				} else {
+					alert("Invalid");
+				}
+			},
 			joinRoom(roomId) {
 				this.$socket.emit(events.JOIN_ROOM, {
 					id: roomId,
@@ -171,6 +185,14 @@
 					if (data !== "undefined") {
 						this.publicGames = data.games;
 						console.log(this.publicGames);
+					}
+				});
+				this.$socket.on(events.JOIN_PRIVATE_ROOM, (data) => {
+					console.log("Private Room", data);
+					if (data.isAvailable) {
+						this.joinRoom(this.gameId);
+					} else {
+						alert("Invalid GameId");
 					}
 				});
 			},

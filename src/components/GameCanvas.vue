@@ -307,19 +307,17 @@
 					this.hints = data;
 				});
 
-				this.$socket.on(events.END_GAME, () => {
+				this.$socket.on(events.END_GAME, (data) => {
 					console.log("END_GAME");
+					console.log(data);
+					let score = {};
+					score[data.roomID] = data.scores;
+					this.setScore(score);
 					this.gameEnded = true;
 					this.$router.push({ path: `/room/${this.roomId}/gameend` });
 				});
 
-				this.$socket.on(events.GET_SCORE, (data) => {
-					console.log("Got Score");
-					console.log(data);
-					let score = {}
-					score[this.roomId] = data;
-					this.setScore(score);
-				});
+				
 				// MessageEvents
 				// this.$socket.on(events.MESSAGE, (data) => {
 				// 	console.log("message", data);

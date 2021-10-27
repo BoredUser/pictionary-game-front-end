@@ -115,7 +115,7 @@
 </template>
 
 <script>
-	import { nanoid } from 'nanoid'
+	import { nanoid } from "nanoid";
 	import backgroundImageUrl from "@/assets/img/textura.png";
 	import { mapMutations } from "vuex";
 	import { registerUser, userLogin } from "@/services/userManagementServices.js";
@@ -139,12 +139,11 @@
 				/* eslint-enable */
 			};
 		},
-		mounted() {
-		},
+		mounted() {},
 		methods: {
 			...mapMutations({
 				setName: SET_NAME,
-				setCustomSocketId: SET_SOCKET_CUTOM_ID
+				setCustomSocketId: SET_SOCKET_CUTOM_ID,
 			}),
 			async registerUser() {
 				try {
@@ -162,14 +161,19 @@
 			async login() {
 				if (this.userEmail !== "") {
 					if (this.password !== "") {
-						const data = await userLogin(
-							this.userEmail,
-							this.password
-						);
-						console.log(data);
-						this.setCustomSocketId(nanoid(10));
-						this.setName(data.userName);
-						this.$router.push({ name: "Rooms" });
+						try {
+							const data = await userLogin(
+								this.userEmail,
+								this.password
+							);
+							console.log(data);
+							this.setCustomSocketId(nanoid(10));
+							this.setName(data.userName);
+							this.$router.push({ name: "Rooms" });
+						} catch (err) {
+							//TODO: Alert
+							console.log("Invalid Password");
+						}
 					} else {
 						//TODO: Alert
 						console.log("Invalid Password");
@@ -218,7 +222,7 @@
 					this.setName(this.nickName);
 					this.$router.push({ name: "Rooms" });
 				} else {
-					alert("Invalid Nickname");
+					this.$toasted.error("Invalid Username");
 				}
 			},
 		},

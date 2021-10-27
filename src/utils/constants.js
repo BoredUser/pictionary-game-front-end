@@ -23,5 +23,6 @@ export const events = {
 	GET_ROOMS: 'getRooms',
 	SET_CUSTOM_CLIENT_ID: 'clientAfterConnection',
 	GET_ROOM_PLAYERS: 'getPlayersInARoom',
-	GET_SCORE: 'getScore'
+	GET_SCORE: 'getScore',
+	JOIN_PRIVATE_ROOM: 'joinPrivateRoom'
 }
