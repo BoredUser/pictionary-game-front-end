@@ -420,8 +420,8 @@
 			},
 			handleResize() {
 				let state = this.$refs.paintBoard.toDataURL("image/png");
-				this.canvasWidth = this.$refs.canvasParent.clientWidth;
-				this.canvasHeight = this.$refs.canvasParent.clientHeight;
+				this.canvasWidth = this.$refs.paintBoard.clientWidth;
+				this.canvasHeight = this.$refs.paintBoard.clientHeight;
 				this.drawUpdate(state);
 			},
 			sendAnswer() {
