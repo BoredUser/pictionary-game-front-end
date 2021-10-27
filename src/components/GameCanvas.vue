@@ -559,6 +559,7 @@
 		border-radius: 12px;
 		border: 4px rgba(29, 29, 27, 0.15) solid;
 		margin: 20px 0;
+		overflow: scroll;
 	}
 
 	.controls {
@@ -580,6 +581,8 @@
 	.canvas-board {
 		border-radius: 12px;
 		background-color: #fff;
+		height: 400px;
+		width: 400px;
 	}
 
 	.palette-container {
