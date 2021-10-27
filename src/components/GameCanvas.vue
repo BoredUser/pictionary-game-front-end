@@ -324,10 +324,10 @@
 				});
 
 				// MessageEvents
-				// this.$socket.on(events.MESSAGE, (data) => {
-				// 	console.log("message", data);
-				// 	this.appendAnswers(data);
-				// });
+				this.$socket.on(events.MESSAGE, (data) => {
+					console.log("message", data);
+					this.appendAnswers(data);
+				});
 				this.$socket.on(events.CLOSE_GUESS, (data) => {
 					console.log("CLOSE_GUESS", data);
 					this.appendAnswers(data, { closeGuess: true });
