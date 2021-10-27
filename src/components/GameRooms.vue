@@ -123,21 +123,12 @@
 			}),
 		},
 		mounted() {
-			this.socketConnection();
 			this.listenToSocketEvents();
 			this.$socket.emit(events.GET_ROOMS, {
 				id: this.$socket.id,
 			});
 		},
 		methods: {
-			socketConnection() {
-				this.$socket.on("connect", () => {
-					console.log(this.$socket.id);
-					this.$socket.emit(events.GET_ROOMS, {
-						id: this.$socket.id,
-					});
-				});
-			},
 			createGame() {
 				if (
 					this.gameName !== "" &&

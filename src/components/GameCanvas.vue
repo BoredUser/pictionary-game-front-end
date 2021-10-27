@@ -65,9 +65,9 @@
 								@mousedown="beginDrawing"
 								@mouseup="stopDrawing"
 								@mouseleave="cancelDrawing"
-								@touchstart="beginDrawing"
-								@touchmouve="draw"
-								@touchend="stopDrawing"
+								v-touch:start="beginDrawing"
+								v-touch:moving="draw"
+								v-touch:end="stopDrawing"
 							/>
 						</div>
 						<div class="controls">
@@ -232,6 +232,9 @@
 			window.addEventListener("resize", this.handleResize);
 		},
 		methods: {
+			start() {
+				console.log("drawing");
+			},
 			...mapMutations({
 				setScore: SET_SCORE,
 			}),
@@ -555,16 +558,16 @@
 
 	.board {
 		order: 1;
-		flex-basis: 70%;
+		flex-basis: 90%;
 		border-radius: 12px;
 		border: 4px rgba(29, 29, 27, 0.15) solid;
 		margin: 20px 0;
-		overflow: scroll;
+		overflow: hidden;
 	}
 
 	.controls {
 		order: 3;
-		flex-basis: 100%;
+		flex-basis: 90%;
 		border-radius: 12px;
 		border: 4px rgba(29, 29, 27, 0.15) solid;
 		background-color: rgba(80, 24, 81, 0.25);
@@ -581,8 +584,8 @@
 	.canvas-board {
 		border-radius: 12px;
 		background-color: #fff;
-		height: 400px;
-		width: 400px;
+		height: 300px;
+		width: 300px;
 	}
 
 	.palette-container {
@@ -734,7 +737,11 @@
 		.board {
 			order: 2;
 			flex-basis: 70%;
-			min-height: 400px;
+		}
+
+		.canvas-board {
+			height: 400px;
+			width: 400px;
 		}
 
 		.controls {
