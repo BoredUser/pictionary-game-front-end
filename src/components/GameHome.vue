@@ -101,13 +101,29 @@
 			<div class="instructions-wrapper">
 				<div class="instructions">
 					<h3>How to play?</h3>
-					<ul class="instructions-dots">
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-						<li></li>
-					</ul>
+					<div>
+						<vue-slick-carousel
+							:autoplay="true"
+							:dots="true"
+							:options="slickOptions"
+							:speed=2000
+							:arrows= "false"
+						>
+							<div class="slide-1">
+								<i class="instruction-icon fas fa-sign-in-alt"></i>
+								<p class="instructions-text">Register And Login or Play Anonymously</p>
+							</div>
+							<div class="slide-2">
+								<p>Slide 2</p>
+							</div>
+							<div class="slide-3">
+								<p>Slide 3</p>
+							</div>
+							<div class="slide-4">
+								<p>Slide 4</p>
+							</div>
+						</vue-slick-carousel>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -120,6 +136,9 @@
 	import { mapMutations } from "vuex";
 	import { registerUser, userLogin } from "@/services/userManagementServices.js";
 	import { SET_NAME, SET_SOCKET_CUTOM_ID } from "../store/mutation.type";
+	import VueSlickCarousel from "vue-slick-carousel";
+	import "vue-slick-carousel/dist/vue-slick-carousel.css";
+	import "vue-slick-carousel/dist/vue-slick-carousel-theme.css";
 	export default {
 		name: "GameHome",
 		data() {
@@ -136,10 +155,17 @@
 				emailReg:
 					/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/,
 				passwordReg: /^(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[A-Z])/,
+
 				/* eslint-enable */
+				slickOptions: {
+					infinite: true,
+					slidesToShow: 1,
+				},
 			};
 		},
-		mounted() {},
+		components: {
+			VueSlickCarousel,
+		},
 		methods: {
 			...mapMutations({
 				setName: SET_NAME,
@@ -319,7 +345,7 @@
 
 	.instructions-wrapper {
 		flex-basis: 100%;
-		height: 550px;
+		height: 500px;
 	}
 
 	.logintabs {
@@ -333,6 +359,25 @@
 		height: 100%;
 		border: 4px rgba(29, 29, 27, 0.15) solid;
 		border-radius: 12px;
+	}
+
+	.instructions div:first-child{
+		display: flex;
+	}
+	.instructions div div {
+		margin: 50px auto;
+		width: 300px;
+		height: 300px;
+		background-color: white;
+	}
+
+	.instructions-text{
+		margin: 10px
+	}
+
+	.instruction-icon{
+		font-size: 2em;
+		margin: 20px
 	}
 
 	.tabs {
