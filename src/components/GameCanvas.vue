@@ -65,9 +65,9 @@
 								@mousedown="beginDrawing"
 								@mouseup="stopDrawing"
 								@mouseleave="cancelDrawing"
-								v-touch:start="beginDrawing"
-								v-touch:moving="draw"
-								v-touch:end="stopDrawing"
+								v-touch:start="beginDrawingTouch"
+								v-touch:moving="drawTouch"
+								v-touch:end="stopDrawingTouch"
 							/>
 						</div>
 						<div class="controls">
@@ -395,6 +395,38 @@
 					);
 				}
 			},
+			drawTouch(e) {
+				if (this.isDrawing) {
+					const { offsetLeft, offsetTop } = e.target;
+					this.drawLine(
+						this.x,
+						this.y,
+						e.touches[0].clientX - offsetLeft,
+						e.touches[0].clientY - offsetTop
+					);
+					
+					this.x = e.touches[0].clientX - offsetLeft;
+					this.y = e.touches[0].clientY - offsetTop;
+				}
+			},
+			beginDrawingTouch(e) {
+				const { offsetLeft, offsetTop } = e.target;
+				this.x = e.touches[0].clientX - offsetLeft;
+				this.y = e.touches[0].clientY - offsetTop;
+				if (this.isChooser) {
+					this.isDrawing = true;
+				}
+			},
+			stopDrawingTouch() {
+				if (this.isDrawing) {
+					this.isDrawing = false;
+					this.image = this.$refs.paintBoard.toDataURL("image/png");
+					this.$socket.emit(
+						events.DRAWING,
+						this.$refs.paintBoard.toDataURL("image/png")
+					);
+				}
+			},
 			drawUpdate(url) {
 				let image = new Image();
 				let ctx = this.$refs.paintBoard.getContext("2d");
@@ -697,15 +729,18 @@
 		border-radius: 12px;
 		border: 4px rgba(29, 29, 27, 0.15) solid;
 		margin: 10px;
-	}
-
-	.sent-messages {
 		list-style: none;
 		padding: 0;
+		order: 2;
 	}
+
 	.sent-messages li {
 		margin: 20px;
 		text-align: left;
+	}
+
+	.send-message {
+		order: 1;
 	}
 	.correct-guess {
 		font-weight: bold;
@@ -755,6 +790,13 @@
 
 		.palette-container .selected-color {
 			display: block;
+		}
+
+		.sent-messages {
+			order: 1;
+		}
+		.send-message {
+			order: 2;
 		}
 	}
 

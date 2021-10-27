@@ -11,25 +11,7 @@ import { GET_NAME } from "../store/getter.type";
 const router = new VueRouter({
 	mode: "history",
 	routes: [
-		{
-			name: "Canvas",
-			path: "/test",
-			component: () => import(/* webpackChunkName: "Home" */ '@/components/Canvas.vue'),
-			//component: Canvas,
-			meta: {
-				title: "Pictionary Game",
-				metaTags: [
-					{
-						name: "Pictionary Game",
-						content: "The Best drawing and guessing game",
-					},
-					{
-						property: "og:description",
-						content: "The Best drawing and guessing game",
-					},
-				],
-			},
-		},
+		
 		{
 			name: "Home",
 			path: "/",
