@@ -106,6 +106,7 @@
 							:autoplay="true"
 							:dots="true"
 							:options="slickOptions"
+							:autoplaySpeed=5000
 							:speed=2000
 							:arrows= "false"
 						>
@@ -123,7 +124,7 @@
 							</div>
 							<div>
 								<i class="instruction-icon fas fa-paint-brush"></i>
-								<p class="instructions-text">Guess your friends drawings or slect a word and draw for yous friend to guess</p>
+								<p class="instructions-text">Guess your friends drawings or select a word and draw for yous friend to guess</p>
 							</div>
 							<div>
 								<i class="instruction-icon fas fa-smile"></i>
