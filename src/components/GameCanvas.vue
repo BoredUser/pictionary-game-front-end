@@ -218,7 +218,6 @@
 			// },
 		},
 		mounted() {
-			this.socketConnection();
 			this.$socket.emit(events.GET_ROOM_PLAYERS, { id: this.roomId });
 			if (!this.game) {
 				this.$router.push({ name: "Home" });
@@ -233,13 +232,6 @@
 			...mapMutations({
 				setScore: SET_SCORE
 			}),
-			socketConnection() {
-				this.$socket.on("connect", () => {
-					console.log(this.$socket.id);
-					
-					this.$socket.emit(events.GET_ROOM_PLAYERS, { id: this.roomId });
-				});
-			},
 			countdown() {
 				if (this.remainingTime <= 0) {
 					clearInterval(this.timer);

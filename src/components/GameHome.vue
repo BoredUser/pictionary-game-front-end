@@ -208,6 +208,7 @@
 					}
 				} else {
 					//TODO: Alert
+					this.$toasted.show("Invalid Username");
 					console.log("Invalid Username");
 				}
 			},

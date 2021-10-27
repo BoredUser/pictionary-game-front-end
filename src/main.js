@@ -8,6 +8,9 @@ import router from "@/router/routes.js";
 
 import store from "./store";
 import { io } from "socket.io-client";
+import Toasted from 'vue-toasted';
+//http://localhost:3001
+//https://fa-pictionary-app.herokuapp.com
 const socket = io("https://fa-pictionary-app.herokuapp.com", {
 	transports: ["websocket"],
 });
@@ -29,6 +32,9 @@ socket.on("connect", () => {
 	}
 });
 
+ 
+Vue.use(Toasted)
+ 
 Vue.prototype.$socket = socket;
 
 Vue.config.productionTip = false;
