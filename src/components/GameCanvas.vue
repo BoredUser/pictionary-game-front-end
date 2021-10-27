@@ -65,6 +65,9 @@
 								@mousedown="beginDrawing"
 								@mouseup="stopDrawing"
 								@mouseleave="cancelDrawing"
+								@touchstart="beginDrawing"
+								@touchmouve="draw"
+								@touchend="stopDrawing"
 							/>
 						</div>
 						<div class="controls">
@@ -413,7 +416,7 @@
 			clearCanvasRemote() {
 				this.isDrawing = false;
 				let ctx = this.$refs.paintBoard.getContext("2d");
-					ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+				ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
 			},
 			handleResize() {
 				let state = this.$refs.paintBoard.toDataURL("image/png");
@@ -556,7 +559,6 @@
 		border-radius: 12px;
 		border: 4px rgba(29, 29, 27, 0.15) solid;
 		margin: 20px 0;
-		
 	}
 
 	.controls {
