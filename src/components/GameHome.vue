@@ -186,7 +186,7 @@
 						this.registerPassword
 					);
 					console.log(data);
-					this.$toasted.show("Registration Successful", {
+					this.$toasted.success("Registration Successful", {
 						theme: "bubble",
 						position: "top-center",
 						duration: 2000,

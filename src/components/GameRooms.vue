@@ -135,14 +135,28 @@
 					this.gameRounds > 0 &&
 					this.gameTime > 30
 				) {
-					this.$socket.emit(events.CREATE_ROOM, {
-						rounds: this.gameRounds,
-						time: this.gameTime,
-						id: this.customSocketId,
-						name: this.usernName,
-						type: this.createPrivateGame,
-						gameName: this.gameName,
-					});
+					if (
+						this.gameTime > 30
+					) {
+						this.$socket.emit(events.CREATE_ROOM, {
+							rounds: this.gameRounds,
+							time: this.gameTime,
+							id: this.customSocketId,
+							name: this.usernName,
+							type: this.createPrivateGame,
+							gameName: this.gameName,
+						});
+					} else {
+						this.$toasted.error(
+							"Game time should be greater than 30 seconds",
+							{
+								theme: "bubble",
+								position: "top-center",
+								duration: 2000,
+								className: "toaster-class",
+							}
+						);
+					}
 				} else {
 					this.$toasted.error("Invalid Details", {
 						theme: "bubble",
