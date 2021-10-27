@@ -1,18 +1,40 @@
 import VueRouter from "vue-router";
 import store from "@/store";
 import { GET_NAME } from "../store/getter.type";
-import GameHome from "@/components/GameHome.vue";
-import GameRooms from "@/components/GameRooms.vue";
-import GameLobby from "@/components/GameLobby.vue";
-import GameCanvas from "@/components/GameCanvas.vue";
-import GameEnd from "@/components/GameEnd.vue";
+// import GameHome from "@/components/GameHome.vue";
+// import GameRooms from "@/components/GameRooms.vue";
+// import GameLobby from "@/components/GameLobby.vue";
+// import GameCanvas from "@/components/GameCanvas.vue";
+// import GameEnd from "@/components/GameEnd.vue";
+// import Canvas from "@/components/Canvas.vue";
+
 const router = new VueRouter({
 	mode: "history",
 	routes: [
 		{
+			name: "Canvas",
+			path: "/test",
+			component: () => import(/* webpackChunkName: "Home" */ '@/components/Canvas.vue'),
+			//component: Canvas,
+			meta: {
+				title: "Pictionary Game",
+				metaTags: [
+					{
+						name: "Pictionary Game",
+						content: "The Best drawing and guessing game",
+					},
+					{
+						property: "og:description",
+						content: "The Best drawing and guessing game",
+					},
+				],
+			},
+		},
+		{
 			name: "Home",
 			path: "/",
-			component: GameHome,
+			component: () => import(/* webpackChunkName: "Home" */ '@/components/GameHome.vue'),
+			//component: GameHome,
 			meta: {
 				title: "Pictionary Game",
 				metaTags: [
@@ -30,7 +52,8 @@ const router = new VueRouter({
 		{
 			name: "Rooms",
 			path: "/rooms",
-			component: GameRooms,
+			component: () => import(/* webpackChunkName: "Home" */ '@/components/GameRooms.vue'),
+			//component: GameRooms,
 			meta: {
 				title: "Pictionary Game | Room",
 				metaTags: [
@@ -48,7 +71,8 @@ const router = new VueRouter({
 		{
 			name: "Room",
 			path: "/room/:id",
-			component: GameLobby,
+			component: () => import(/* webpackChunkName: "Home" */ '@/components/GameLobby.vue'),
+			//component: GameLobby,
 			meta: {
 				title: "Pictionary Game | Lobby",
 				metaTags: [
@@ -66,7 +90,8 @@ const router = new VueRouter({
 		{
 			name: "Canvas",
 			path: "/room/:id/canvas",
-			component: GameCanvas,
+			component: () => import(/* webpackChunkName: "Home" */ '@/components/GameCanvas.vue'),
+			//component: GameCanvas,
 			meta: {
 				title: "Pictionary Game | Lobby",
 				metaTags: [
@@ -84,7 +109,8 @@ const router = new VueRouter({
 		{
 			name: "GameEnd",
 			path: "/room/:id/gameend",
-			component: GameEnd,
+			component: () => import(/* webpackChunkName: "Home" */ '@/components/GameEnd.vue'),
+			//component: GameEnd,
 			meta: {
 				title: "Pictionary Game | End",
 				metaTags: [
