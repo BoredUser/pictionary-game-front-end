@@ -308,7 +308,7 @@
 		order: 2;
 		flex-grow: 1;
 		width: 100%;
-		height: 400px;
+		height: 450px;
 		display: none;
 		background-color: rgba(80, 24, 81, 0.25);
 		margin-top: 5px;

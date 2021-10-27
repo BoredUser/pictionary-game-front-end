@@ -414,12 +414,12 @@
 
 		.private-game-wrapper {
 			flex-basis: 60%;
-			height: 450px;
+			height: 500px;
 		}
 
 		.create-game-wrapper {
 			flex-basis: 40%;
-			height: 450px;
+			height: 500px;
 		}
 	}
 

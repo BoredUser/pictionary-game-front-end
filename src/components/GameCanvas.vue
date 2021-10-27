@@ -180,7 +180,7 @@
 				eraserActive: false,
 				image: null,
 				message: null,
-				roomId:null,
+				roomId: null,
 				// Data from clone
 				word: "Test",
 				remainingTime: 0,
@@ -230,7 +230,7 @@
 		},
 		methods: {
 			...mapMutations({
-				setScore: SET_SCORE
+				setScore: SET_SCORE,
 			}),
 			countdown() {
 				if (this.remainingTime <= 0) {
@@ -317,7 +317,6 @@
 					this.$router.push({ path: `/room/${this.roomId}/gameend` });
 				});
 
-				
 				// MessageEvents
 				// this.$socket.on(events.MESSAGE, (data) => {
 				// 	console.log("message", data);
@@ -337,7 +336,6 @@
 						{ lastWord: true }
 					)
 				);
-
 			},
 
 			drawLine(x1, y1, x2, y2) {
@@ -382,7 +380,14 @@
 				}
 			},
 			cancelDrawing() {
-				this.isDrawing = false;
+				if (this.isDrawing) {
+					this.isDrawing = false;
+					this.image = this.$refs.paintBoard.toDataURL("image/png");
+					this.$socket.emit(
+						events.DRAWING,
+						this.$refs.paintBoard.toDataURL("image/png")
+					);
+				}
 			},
 			drawUpdate(url) {
 				let image = new Image();
