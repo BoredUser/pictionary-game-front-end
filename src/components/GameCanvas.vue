@@ -174,7 +174,7 @@
 					"aqua",
 				],
 				selectedColor: "black",
-				brushSize: 10,
+				brushSize: 5,
 				x: 0,
 				y: 0,
 				canvasWidth: 0,
@@ -404,7 +404,7 @@
 						e.touches[0].clientX - offsetLeft,
 						e.touches[0].clientY - offsetTop
 					);
-					
+
 					this.x = e.touches[0].clientX - offsetLeft;
 					this.y = e.touches[0].clientY - offsetTop;
 				}
@@ -431,7 +431,29 @@
 				let image = new Image();
 				let ctx = this.$refs.paintBoard.getContext("2d");
 				image.onload = () => {
-					ctx.drawImage(image, 0, 0);
+					if (!this.isChooser) {
+						let canvas = ctx.canvas;
+						let hRatio = this.canvasWidth / image.width;
+						let vRatio = this.canvasHeight / image.height;
+						let ratio = Math.min(hRatio, vRatio);
+						let centerShift_x =
+							(canvas.width - image.width * ratio) / 2;
+						let centerShift_y =
+							(canvas.height - image.height * ratio) / 2;
+						ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+						ctx.drawImage(
+							image,
+							0,
+							0,
+							image.width,
+							image.height,
+							centerShift_x,
+							centerShift_y,
+							image.width * ratio,
+							image.height * ratio
+						);
+					}
+					//ctx.drawImage(image, 0, 0);
 				};
 				image.src = url;
 			},
