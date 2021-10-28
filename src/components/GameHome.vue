@@ -162,7 +162,7 @@
 				/* eslint-disable */
 				emailReg:
 					/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,24}))$/,
-				passwordReg: /^(?=.*[0-9])(?=.*[!@#$%^&*])(?=.*[A-Z])/,
+				passwordReg: /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
 
 				/* eslint-enable */
 				slickOptions: {
@@ -268,7 +268,7 @@
 								console.log("Passwords dont match");
 							}
 						} else {
-							this.$toasted.error("Invalid Password", {
+							this.$toasted.error("Password should at least 8 letters with a capital letter, small letter, number, and a special character.", {
 								theme: "bubble",
 								position: "top-center",
 								duration: 2000,
