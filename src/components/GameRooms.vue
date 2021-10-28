@@ -130,14 +130,8 @@
 		},
 		methods: {
 			createGame() {
-				if (
-					this.gameName !== "" &&
-					this.gameRounds > 0 &&
-					this.gameTime > 30
-				) {
-					if (
-						this.gameTime > 30
-					) {
+				if (this.gameName !== "" && this.gameRounds > 0) {
+					if (this.gameTime > 30) {
 						this.$socket.emit(events.CREATE_ROOM, {
 							rounds: this.gameRounds,
 							time: this.gameTime,
