@@ -4,9 +4,9 @@
 Pictionary game in Vue
 ```
 
-## Backend for frontend to work
+## [Backend for frontend to work](https://github.com/BoredUser/pictionary-game-back-end)
 ```
-[https://github.com/BoredUser/pictionary-game-back-end](https://github.com/BoredUser/pictionary-game-back-end)
+https://github.com/BoredUser/pictionary-game-back-end
 ```
 
 ## Project setup
